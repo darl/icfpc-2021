@@ -3,11 +3,11 @@ package optimizer
 
 import icfpc21.classified.model.{Figure, Hole, Problem, Solution}
 import icfpc21.classified.optimizer.mutators.{IdentityMutator, MirrorMutator, MovePointMutator, SmallMovePointMutator}
-import icfpc21.classified.solver.Solver
+import icfpc21.classified.solver.{Solver, SolverListener}
 
 import scala.util.Random
 
-class GenerationalSolver extends Solver {
+class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val count = 500
   val ChildrenPerGeneration = 5
   val MutationsPerChild = 3
@@ -48,6 +48,7 @@ class GenerationalSolver extends Solver {
     }
     printScore(0, problem.figure)
 
+    solverListener.start(problem)
     var candidates = Seq.fill(count)(problem.figure)
     var generation = 0
     var finished = false
@@ -56,12 +57,15 @@ class GenerationalSolver extends Solver {
       val newGeneration = candidates.flatMap(generate(_, problem.hole))
       val sorted = newGeneration.sortBy(f => Scorer.score(f, problem))
       val selected = sorted.takeRight(count)
+      solverListener.candidates(selected.takeRight(5))
       printScore(generation, selected.last)
       finished = isFinished(selected.last)
 
       candidates = selected
     }
 
-    Solution(candidates.last.vertices)
+    val result = Solution(candidates.last.vertices)
+    solverListener.solution(result)
+    result
   }
 }
