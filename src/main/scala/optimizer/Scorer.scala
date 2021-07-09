@@ -36,4 +36,12 @@ object Scorer {
     }
   }
 
+  def score(figure: Figure, hole: Hole)(implicit eps: Int): Double = {
+    var result = 0d
+    if (figure.isValid) result += 10000
+    if (checkFits(figure, hole)) result += 1000
+    result += scoreDislikes(figure, hole)
+    result
+  }
+
 }
