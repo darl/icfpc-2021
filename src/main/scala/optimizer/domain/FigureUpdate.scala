@@ -1,12 +1,15 @@
 package icfpc21.classified
 package optimizer.domain
 
-import icfpc21.classified.model.Figure
-
 class FigureUpdate(eps: Int) {
   private val eps0 = eps.toDouble / 1000000
 
-  class PointUpdate(var x: Double, var y: Double)
+  class PointUpdate(var x: Double, var y: Double) {
+    def moveTo(newX: Double, newY: Double): Unit = {
+      x = newX
+      y = newY
+    }
+  }
   class EdgeUpdate(aIndex: Int, bIndex: Int, originSquaredLength: Double) {
     def squaredLength: Double = {
       val a = _points(aIndex)
@@ -35,5 +38,5 @@ class FigureUpdate(eps: Int) {
 
   def isValid: Boolean = edges.forall(_.isValid)
 
-  def build: Figure = ???
+  def copy: FigureUpdate = ???
 }
