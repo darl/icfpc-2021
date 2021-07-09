@@ -7,6 +7,4 @@ case class Figure(vertices: Seq[Vector], edges: Seq[Edge]) {
     val b = vertices(edge.bIndex)
     CalcedEdge(a, b, originSquaredLength = (a - b).squaredLength)
   }
-
-//  def isValid(implicit eps: Int) = edges.forall(_.isValid)
 }
