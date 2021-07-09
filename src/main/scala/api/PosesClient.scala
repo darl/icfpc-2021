@@ -13,7 +13,7 @@ import io.circe.generic.semiauto._
 trait PosesClient {
 
   def getProblem(problemId: Int): Problem
-  def submitSolution(problemId: Int, resultFigure: Figure): Unit
+  def submitSolution(problemId: Int, solution: Solution): Unit
 }
 
 object PosesClient {
@@ -50,9 +50,9 @@ object PosesClient {
       }.fold(fail => throw new RuntimeException(fail), res => res)
     }
 
-    override def submitSolution(problemId: Int, resultFigure: Figure): Unit = {
+    override def submitSolution(problemId: Int, solution: Solution): Unit = {
       val body = SolutionDto(
-        vertices = resultFigure.vertices.map(p => Seq(p.x, p.y))
+        vertices = solution.vertices.map(p => Seq(p.x, p.y))
       ).asJson
       val request = HttpRequest.newBuilder
         .uri(URI.create(s"$serverUrl/api/problems/$problemId/solutions"))
