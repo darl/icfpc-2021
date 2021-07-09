@@ -27,14 +27,15 @@ object Scorer {
     } :+ (0, hole.points.size - 1)
 
     val onTheEdge = scala.collection.mutable.HashMap[Vector, Boolean]()
+    val poly = new Polygon(hole.points.map(_.x).toArray, hole.points.map(_.y).toArray, hole.points.size)
 
     val intersections = figure.edges.forall { edge =>
-      val q = figure.vertices(edge.aIndex)
-      val s = figure.vertices(edge.bIndex) - q
+      val q = figure.vertices(edge.aIndex).toDouble
+      val s = figure.vertices(edge.bIndex).toDouble - q
       holeEdges.forall {
         case (pIndex, rIndex) =>
-          val p = hole.points(pIndex)
-          val r = hole.points(rIndex) - p
+          val p = hole.points(pIndex).toDouble
+          val r = hole.points(rIndex).toDouble - p
 
           // https://stackoverflow.com/a/565282
           val p1 = (q - p).product(r)
@@ -47,16 +48,29 @@ object Scorer {
               val t1 = t0 + ((s |*| r) / (r |*| r))
 
               if (t0 >= 0 && t0 <= 1) {
-                onTheEdge.put(q, true)
-                true
-              } else if (t1 >= 0 && t1 <= 1) {
+                onTheEdge.put(figure.vertices(edge.aIndex), true)
+              }
+              if (t1 >= 0 && t1 <= 1) {
                 onTheEdge.put(figure.vertices(edge.bIndex), true)
-                true
+              }
+              val min = t0.min(t1)
+              val max = t0.max(t1)
+
+              if (min >= 0 && min <= 1) {
+                if (max < 0 || max > 1) {
+                  var pisechka = q + (s * min)
+                  pisechka = pisechka + pisechka.widthLength(0.01)
+                  poly.contains(pisechka.x, pisechka.y)
+                } else true
+              } else if (max >= 0 && max <= 1) {
+                var pisechka = q + (s * max)
+                pisechka = pisechka + pisechka.widthLength(0.01)
+                poly.contains(pisechka.x, pisechka.y)
               } else false
             case (_, 0) => true
             case _ =>
               val u = p1.toDouble / p2
-              if (u == 0) onTheEdge.put(q, true)
+              if (u == 0) onTheEdge.put(figure.vertices(edge.aIndex), true)
               if (u == 1) onTheEdge.put(figure.vertices(edge.bIndex), true)
               (u <= 0 || u >= 1) || {
                 val t = (q - p).product(s).toDouble / r.product(s)
@@ -66,7 +80,6 @@ object Scorer {
       }
     }
 
-    val poly = new Polygon(hole.points.map(_.x).toArray, hole.points.map(_.y).toArray, hole.points.size)
     intersections && figure.vertices.forall(v => onTheEdge.getOrElse(v, poly.contains(v.x, v.y)))
 
   }

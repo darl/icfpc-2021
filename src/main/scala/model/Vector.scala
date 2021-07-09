@@ -68,8 +68,10 @@ case class Vector(x: Int, y: Int) {
 
   def isZero: Boolean = x == 0 && y == 0
   def nonZero: Boolean = !isZero
+
+  def toDouble: VectorD = VectorD(x, y)
 }
 
-object Point {
+object Vector {
   val Zero: Vector = Vector(0, 0)
 }
