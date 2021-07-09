@@ -3,8 +3,6 @@ package solver
 
 import icfpc21.classified.model.{Problem, Solution}
 
-object Solver {
-  def solve(problem: Problem): Solution = {
-    Solution(problem.figure.vertices)
-  }
+trait Solver {
+  def solve(problem: Problem): Solution
 }

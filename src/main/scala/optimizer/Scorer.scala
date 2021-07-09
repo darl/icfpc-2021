@@ -1,7 +1,7 @@
 package icfpc21.classified
 package optimizer
 
-import model.{Figure, Hole, Vector}
+import icfpc21.classified.model._
 
 import java.awt.Polygon
 
@@ -64,17 +64,21 @@ object Scorer {
 
   }
 
-  def checkStretchingIsOk(
-      origF: Figure,
-      currentF: Figure,
-      eps: Int
-  ): Boolean = {
-    val allowedEpsDiff = eps.toDouble / 1_000_000
-    origF.edges.forall { edge =>
-      val origLength = (origF.vertices(edge.bIndex) - origF.vertices(edge.aIndex)).length
-      val curLength = (currentF.vertices(edge.bIndex) - currentF.vertices(edge.aIndex)).length
-      Math.abs(origLength / curLength - 1) <= allowedEpsDiff
+  def checkStretchingIsOk(currentF: Figure, problem: Problem): Boolean = {
+    val allowedEpsDiff = problem.epsilon.toDouble / 1_000_000
+    problem.figure.edges.forall { edge =>
+      val origLength = (problem.figure.vertices(edge.bIndex) - problem.figure.vertices(edge.aIndex)).squaredLength
+      val curLength = (currentF.vertices(edge.bIndex) - currentF.vertices(edge.aIndex)).squaredLength
+      Math.abs((origLength.toDouble / curLength) - 1) <= allowedEpsDiff
     }
+  }
+
+  def score(figure: Figure, problem: Problem): Double = {
+    var result = 0d
+    if (checkStretchingIsOk(figure, problem)) result += 10000
+    if (checkFits(figure, problem.hole)) result += 1000
+    result += scoreDislikes(figure, problem.hole)
+    result
   }
 
 }
