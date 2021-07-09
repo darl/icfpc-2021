@@ -12,7 +12,9 @@ case class Vector(x: Int, y: Int) {
 
   def ! : Vector = this * -1
 
-  def length: Double = math.sqrt(x * x + y * y)
+  def squaredLength: Int = x * x + y * y
+
+  def length: Double = math.sqrt(squaredLength)
 
   def map(f: Int => Int): Vector = Vector(f(x), f(y))
 
