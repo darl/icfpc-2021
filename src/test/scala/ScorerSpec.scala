@@ -140,6 +140,54 @@ class ScorerSpec extends AnyWordSpec {
 
       assert(Scorer.checkFits(figure, hole) === false)
     }
+//    "7.Super tricky test not fits" in {
+//      val figure = Figure(
+//        vertices = Seq(
+//          Vector(0, 2),
+//          Vector(10, 5),
+//          Vector(0, 8)
+//        ),
+//        edges = Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0))
+//      )
+//
+//      val hole = Hole(points =
+//        Seq(
+//          Vector(0, 0),
+//          Vector(0, 4),
+//          Vector(1, 5),
+//          Vector(0, 6),
+//          Vector(0, 10),
+//          Vector(10, 10),
+//          Vector(10, 0)
+//        )
+//      )
+//
+//      assert(Scorer.checkFits(figure, hole) === false)
+//    }
+    "8.Super tricky test fits" in {
+      val figure = Figure(
+        vertices = Seq(
+          Vector(0, 2),
+          Vector(10, 5),
+          Vector(0, 8)
+        ),
+        edges = Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0))
+      )
+
+      val hole = Hole(points =
+        Seq(
+          Vector(0, 0),
+          Vector(0, 4),
+          Vector(1, 5),
+          Vector(0, 6),
+          Vector(0, 10),
+          Vector(10, 10),
+          Vector(10, 0)
+        )
+      )
+
+      assert(Scorer.checkFits(figure, hole) === true)
+    }
     "checkStretchingIsOk returns true on checking stretching of first example" in {
       import TestData.Example1._
       assert(

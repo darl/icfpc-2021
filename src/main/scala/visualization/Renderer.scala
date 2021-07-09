@@ -3,7 +3,9 @@ package visualization
 
 import model._
 
-import java.awt.{Color, Font, Polygon}
+import icfpc21.classified.optimizer.Scorer
+
+import java.awt.{BasicStroke, Color, Font, Polygon}
 import java.awt.image.BufferedImage
 
 object Renderer {
@@ -28,7 +30,7 @@ object Renderer {
     g.setFont(new Font("Monospaced", Font.PLAIN, 14))
 
     //Background
-    g.setColor(Color.BLACK)
+    g.setColor(Color.LIGHT_GRAY)
     g.fillRect(0, 0, size, size)
 
     //Hole
@@ -47,6 +49,13 @@ object Renderer {
       val b = figure.vertices(edge.bIndex).toScreen
       g.drawLine(a.x, a.y, b.x, b.y)
     }
+
+    // Data
+    //Text
+    g.setColor(Color.RED)
+    g.setStroke(new BasicStroke(3))
+    g.setFont(new Font("Monospaced", Font.PLAIN, 36))
+    g.drawString(s"Figure fits: ${Scorer.checkFits(problem.figure, problem.hole)}", 100, 300)
 
     g.dispose()
     image

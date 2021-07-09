@@ -53,7 +53,7 @@ object Scorer {
               if (u == 1) onTheEdge.put(figure.vertices(edge.bIndex), true)
               (u <= 0 || u >= 1) || {
                 val t = (q - p).product(s).toDouble / r.product(s)
-                t < 0 || t > 1
+                t <= 0 || t >= 1
               }
           }
       }

@@ -9,6 +9,9 @@ object Main extends App {
       hole = Hole(points =
         Seq(
           Vector(0, 0),
+          Vector(0, 4),
+          Vector(1, 5),
+          Vector(0, 6),
           Vector(0, 10),
           Vector(10, 10),
           Vector(10, 0)
@@ -16,9 +19,9 @@ object Main extends App {
       ),
       figure = Figure(
         vertices = Seq(
-          Vector(1, 1),
-          Vector(30, 1),
-          Vector(2, 3)
+          Vector(0, 2),
+          Vector(10, 5),
+          Vector(0, 8)
         ),
         edges = Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0))
       ),
