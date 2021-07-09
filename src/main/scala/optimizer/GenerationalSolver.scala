@@ -2,7 +2,7 @@ package icfpc21.classified
 package optimizer
 
 import icfpc21.classified.model.{Figure, Hole, Problem, Solution}
-import icfpc21.classified.optimizer.mutators.{IdentityMutator, MirrorMutator, MovePointMutator}
+import optimizer.mutators.{IdentityMutator, MirrorMutator, MovePointMutator, MovePointToEdgeMutator, MovePointToCenterMutator}
 import icfpc21.classified.solver.Solver
 
 import scala.util.Random
@@ -16,6 +16,8 @@ class GenerationalSolver extends Solver {
   val mutators: Seq[Mutator] = Seq(
     MirrorMutator,
     MovePointMutator,
+    MovePointToEdgeMutator,
+    MovePointToCenterMutator,
     IdentityMutator
   )
 

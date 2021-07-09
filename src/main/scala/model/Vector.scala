@@ -37,6 +37,8 @@ case class Vector(x: Int, y: Int) {
     }
   }
 
+  def scale(coef: Double): Vector = Vector(math.round(x * coef).toInt, math.round(y * coef).toInt)
+
   def distanceToLine(p1: Vector, p2: Vector): Double = {
     val px = p2.x - p1.x
     val py = p2.y - p1.y
