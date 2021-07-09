@@ -19,23 +19,37 @@ object Renderer {
       )
 
     }
+  }
 
-    def renderProblem(problem: Problem) = {
-      val image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
-      val g = image.createGraphics()
-      g.setFont(new Font("Monospaced", Font.PLAIN, 14))
+  def renderProblem(problem: Problem): BufferedImage = {
+    import problem._
+    val image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
+    val g = image.createGraphics()
+    g.setFont(new Font("Monospaced", Font.PLAIN, 14))
 
-      //Background
-      g.setColor(Color.BLACK)
-      g.fillRect(0, 0, size, size)
+    //Background
+    g.setColor(Color.BLACK)
+    g.fillRect(0, 0, size, size)
 
-      //Hole
-      g.setColor(Color.WHITE)
-      g.fillPolygon(problem.hole.points.map(_.x),)
-      val topLeft = Vector(-14, -14).toScreen
-      g.drawRect(topLeft.x.toInt, topLeft.y.toInt, 28 * scale, 28 * scale)
+    //Hole
+    g.setColor(Color.WHITE)
+    val holePoints = hole.points.map(_.toScreen)
+    g.fillPolygon(
+      holePoints.map(_.x).toArray,
+      holePoints.map(_.y).toArray,
+      holePoints.size
+    )
 
+    //Figure
+    g.setColor(Color.RED)
+    figure.edges.foreach { edge =>
+      val a = figure.vertices(edge.aIndex).toScreen
+      val b = figure.vertices(edge.bIndex).toScreen
+      g.drawLine(a.x, a.y, b.x, b.y)
     }
+
+    g.dispose()
+    image
   }
 
 }
