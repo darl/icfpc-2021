@@ -52,7 +52,6 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     }
     printScore(0, problem.figure)
 
-    solverListener.start(problem)
     var candidates = Seq.fill(count)(problem.figure)
     var generation = 0
     var finished = false

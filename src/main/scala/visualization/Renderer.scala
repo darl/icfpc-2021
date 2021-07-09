@@ -3,14 +3,22 @@ package visualization
 
 import model._
 
-import icfpc21.classified.optimizer.Scorer
-
-import java.awt.{BasicStroke, Color, Font, Polygon}
 import java.awt.image.BufferedImage
+import java.awt.{BasicStroke, Color, Font}
 
 object Renderer {
   val size = 1200
   val scale = 4
+
+  private val colors = Seq(
+    Color.RED,
+    Color.YELLOW,
+    Color.GREEN,
+    Color.BLUE,
+    Color.MAGENTA,
+    Color.CYAN,
+    Color.PINK
+  )
 
   implicit class RichVector(val vector: Vector) {
 
@@ -23,8 +31,7 @@ object Renderer {
     }
   }
 
-  def renderProblem(problem: Problem): BufferedImage = {
-    import problem._
+  def render(hole: Hole, figures: Seq[Figure]): BufferedImage = {
     val image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
     val g = image.createGraphics()
     g.setFont(new Font("Monospaced", Font.PLAIN, 14))
@@ -42,12 +49,16 @@ object Renderer {
       holePoints.size
     )
 
-    //Figure
-    g.setColor(Color.RED)
-    figure.edges.foreach { edge =>
-      val a = figure.vertices(edge.aIndex).toScreen
-      val b = figure.vertices(edge.bIndex).toScreen
-      g.drawLine(a.x, a.y, b.x, b.y)
+    //Figures
+    g.setStroke(new BasicStroke(2))
+    figures.zipWithIndex.foreach {
+      case (figure, index) =>
+        g.setColor(colors(index))
+        figure.edges.foreach { edge =>
+          val a = figure.vertices(edge.aIndex).toScreen
+          val b = figure.vertices(edge.bIndex).toScreen
+          g.drawLine(a.x, a.y, b.x, b.y)
+        }
     }
 
     // Data
@@ -55,7 +66,6 @@ object Renderer {
     g.setColor(Color.RED)
     g.setStroke(new BasicStroke(3))
     g.setFont(new Font("Monospaced", Font.PLAIN, 36))
-    g.drawString(s"Figure fits: ${Scorer.checkFits(problem.figure, problem.hole)}", 100, 300)
 
     g.dispose()
     image
