@@ -1,6 +1,7 @@
 package icfpc21.classified
 
 import icfpc21.classified.data.TestData
+import icfpc21.classified.data.TestData.Example1.hole
 import icfpc21.classified.model._
 import icfpc21.classified.optimizer.Scorer
 import org.scalatest.wordspec.AnyWordSpec
@@ -142,7 +143,7 @@ class ScorerSpec extends AnyWordSpec {
     "checkStretchingIsOk returns true on checking stretching of first example" in {
       import TestData.Example1._
       assert(
-        Scorer.checkStretchingIsOk(originalFigure, submittedFigure, epsilon)
+        Scorer.checkStretchingIsOk(originalFigure, Problem(hole, submittedFigure, epsilon))
       )
     }
     "checkStretchingIsOk returns false" in {
@@ -156,7 +157,7 @@ class ScorerSpec extends AnyWordSpec {
         edges = origFigure.edges
       )
 
-      assert(Scorer.checkStretchingIsOk(origFigure, submitted, 100_000) === false)
+      assert(Scorer.checkStretchingIsOk(origFigure, Problem(hole, submitted, 100_000)) === false)
     }
   }
 }

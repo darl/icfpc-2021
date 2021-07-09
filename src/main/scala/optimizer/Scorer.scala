@@ -77,7 +77,7 @@ object Scorer {
     var result = 0d
     if (checkStretchingIsOk(figure, problem)) result += 10000
     if (checkFits(figure, problem.hole)) result += 1000
-    result += scoreDislikes(figure, problem.hole)
+    result -= scoreDislikes(figure, problem.hole)
     result
   }
 
