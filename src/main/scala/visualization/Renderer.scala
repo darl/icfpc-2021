@@ -1,6 +1,15 @@
 package icfpc21.classified
 package visualization
 
-case class Renderer () {
-  def show(): Unit = ()
+import model._
+
+import java.awt.BorderLayout
+
+case class Renderer(problem: Problem) {
+  def show() = {
+    import javax.swing.JFrame
+    val frame = new JFrame("Problem visualization")
+    frame.setLayout(new BorderLayout())
+    val plane = MyPlane(, 1)
+  }
 }
