@@ -1,13 +1,14 @@
 package icfpc21.classified
 package api
 
-import icfpc21.classified.model.{Edge, Figure, Hole, Point, Problem}
+import icfpc21.classified.model._
 import java.net.{HttpURLConnection, URI}
 import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 
 import io.circe._
-import io.circe.generic.auto._
 import io.circe.syntax._
+import io.circe.parser._
+import io.circe.generic.semiauto._
 
 trait PosesClient {
 
@@ -36,16 +37,17 @@ object PosesClient {
         println("Response body: " + response.body)
         System.exit(2)
       }
-      Json.fromString(response.body()).as[ProblemDto].map { result =>
+      val body = response.body
+      decode[ProblemDto](body).map { result =>
         Problem(
-          hole = Hole(result.hole.map(point => Point(point.head, point.last))),
+          hole = Hole(result.hole.map(point => Vector(point.head, point.last))),
           figure = Figure(
-            vertices = result.figure.vertices.map(point => Point(point.head, point.last)),
+            vertices = result.figure.vertices.map(point => Vector(point.head, point.last)),
             edges = result.figure.edges.map(edge => Edge(edge.head, edge.last))
           ),
           epsilon = result.epsilon
         )
-      }.getOrElse(throw new IllegalStateException("Parsing error"))
+      }.fold(fail => throw new RuntimeException(fail), res => res)
     }
 
     override def submitSolution(problemId: Int, resultFigure: Figure): Unit = {
@@ -68,8 +70,13 @@ object PosesClient {
     }
   }
 
-  case class FigureDto(edges: Seq[Seq[Int]], vertices: Seq[Seq[Int]])
-  case class ProblemDto(hole: Seq[Seq[Int]], figure: FigureDto, epsilon: Int)
+  case class FigureDto(edges: List[List[Int]], vertices: List[List[Int]])
+  case class ProblemDto(hole: List[List[Int]], figure: FigureDto, epsilon: Int)
 
   case class SolutionDto(vertices: Seq[Seq[Int]])
+
+  implicit val figureDecoder: Decoder[FigureDto] = deriveDecoder[FigureDto]
+  implicit val problemDecoder: Decoder[ProblemDto] = deriveDecoder[ProblemDto]
+
+  implicit val solutionEncoder: Encoder[SolutionDto] = deriveEncoder[SolutionDto]
 }
