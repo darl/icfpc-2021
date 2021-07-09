@@ -1,7 +1,7 @@
 package icfpc21.classified
 package optimizer
 
-import icfpc21.classified.model.{Figure, Hole}
+import model.{Figure, Hole, Vector}
 
 import java.awt.Polygon
 
@@ -15,12 +15,53 @@ object Scorer {
   }
 
   def checkFits(figure: Figure, hole: Hole): Boolean = {
-    val poly = new Polygon(
-      hole.points.map(_.x).toArray,
-      hole.points.map(_.y).toArray,
-      hole.points.size
-    )
-    figure.vertices.forall(p => poly.contains(p.x, p.y))
+    val holeEdges = hole.points.indices.dropRight(1).map { i =>
+      (i, i + 1)
+    } :+ (0, hole.points.size - 1)
+
+    val onTheEdge = scala.collection.mutable.HashMap[Vector, Boolean]()
+
+    val intersections = figure.edges.forall { edge =>
+      val q = figure.vertices(edge.aIndex)
+      val s = figure.vertices(edge.bIndex) - q
+      holeEdges.forall {
+        case (pIndex, rIndex) =>
+          val p = hole.points(pIndex)
+          val r = hole.points(rIndex) - p
+
+          // https://stackoverflow.com/a/565282
+          val p1 = (q - p).product(r)
+          val p2 = r.product(s)
+
+          (p1, p2) match {
+            //collinear
+            case (0, 0) =>
+              val t0 = ((q - p) |*| r) / (r |*| r)
+              val t1 = t0 + ((s |*| r) / (r |*| r))
+
+              if (t0 >= 0 && t0 <= 1) {
+                onTheEdge.put(q, true)
+                true
+              } else if (t1 >= 0 && t1 <= 1) {
+                onTheEdge.put(figure.vertices(edge.bIndex), true)
+                true
+              } else false
+            case (_, 0) => true
+            case _ =>
+              val u = p1.toDouble / p2
+              if (u == 0) onTheEdge.put(q, true)
+              if (u == 1) onTheEdge.put(figure.vertices(edge.bIndex), true)
+              (u <= 0 || u >= 1) || {
+                val t = (q - p).product(s).toDouble / r.product(s)
+                t < 0 || t > 1
+              }
+          }
+      }
+    }
+
+    val poly = new Polygon(hole.points.map(_.x).toArray, hole.points.map(_.y).toArray, hole.points.size)
+    intersections && figure.vertices.forall(v => onTheEdge.getOrElse(v, poly.contains(v.x, v.y)))
+
   }
 
   def checkStretchingIsOk(

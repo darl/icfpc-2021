@@ -10,6 +10,8 @@ case class Vector(x: Int, y: Int) {
 
   def |*|(other: Vector): Double = x * other.x + y * other.y
 
+  def product(other: Vector): Int = x * other.y - y * other.x
+
   def ! : Vector = this * -1
 
   def squaredLength: Int = x * x + y * y
