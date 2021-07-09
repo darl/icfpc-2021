@@ -9,8 +9,7 @@ object Scorer {
   def scoreDislikes(figure: Figure, hole: Hole): Double = {
     hole.points.foldLeft(0) {
       case (sum, point) =>
-        val minDistance =
-          figure.vertices.map(v => (v - point).squaredLength).min
+        val minDistance = figure.vertices.map(v => (v - point).squaredLength).min
         sum + minDistance
     }
   }
@@ -30,19 +29,11 @@ object Scorer {
       eps: Int
   ): Boolean = {
     val allowedEpsDiff = eps.toDouble / 1_000_000
-    val badStretched =  origF.edges.filterNot { edge =>
+    origF.edges.forall { edge =>
       val origLength = (origF.vertices(edge.bIndex) - origF.vertices(edge.aIndex)).length
       val curLength = (currentF.vertices(edge.bIndex) - currentF.vertices(edge.aIndex)).length
-
-      println(s"origLength: ${origLength}, curLength: ${curLength}")
-
       Math.abs(origLength / curLength - 1) <= allowedEpsDiff
     }
-
-    if (badStretched.nonEmpty) println(s"bad stretched: ${badStretched}")
-    else ()
-
-    badStretched.isEmpty
   }
 
 }
