@@ -38,16 +38,29 @@ object PosesClient {
         System.exit(2)
       }
       val body = response.body
-      decode[ProblemDto](body).map { result =>
-        Problem(
-          hole = Hole(result.hole.map(point => Vector(point.head, point.last))),
-          figure = Figure(
-            vertices = result.figure.vertices.map(point => Vector(point.head, point.last)),
-            edges = result.figure.edges.map(edge => Edge(edge.head, edge.last))
-          ),
-          epsilon = result.epsilon
-        )
-      }.fold(fail => throw new RuntimeException(fail), res => res)
+      decode[ProblemDto](body)
+        .map { result =>
+          val figurePoints = result.figure.vertices
+            .map(point => Vector(point.head, point.last))
+          Problem(
+            hole =
+              Hole(result.hole.map(point => Vector(point.head, point.last))),
+            figure = Figure(
+              vertices = figurePoints,
+              edges = result.figure.edges.map(edge =>
+                Edge(
+                  edge.head,
+                  edge.last,
+                  originSquareDistance = (figurePoints(
+                    edge.head
+                  ) - figurePoints(edge.last)).squaredLength
+                )
+              )
+            ),
+            epsilon = result.epsilon
+          )
+        }
+        .fold(fail => throw new RuntimeException(fail), res => res)
     }
 
     override def submitSolution(problemId: Int, solution: Solution): Unit = {
@@ -60,7 +73,8 @@ object PosesClient {
         .version(HttpClient.Version.HTTP_1_1)
         .POST(HttpRequest.BodyPublishers.ofString(body.asString.getOrElse("")))
         .build()
-      val response = client.send(request, HttpResponse.BodyHandlers.discarding())
+      val response =
+        client.send(request, HttpResponse.BodyHandlers.discarding())
       val status = response.statusCode()
       if (status != HttpURLConnection.HTTP_OK) {
         println("Unexpected server response:")
@@ -78,5 +92,6 @@ object PosesClient {
   implicit val figureDecoder: Decoder[FigureDto] = deriveDecoder[FigureDto]
   implicit val problemDecoder: Decoder[ProblemDto] = deriveDecoder[ProblemDto]
 
-  implicit val solutionEncoder: Encoder[SolutionDto] = deriveEncoder[SolutionDto]
+  implicit val solutionEncoder: Encoder[SolutionDto] =
+    deriveEncoder[SolutionDto]
 }
