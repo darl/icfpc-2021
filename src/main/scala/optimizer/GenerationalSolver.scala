@@ -16,8 +16,8 @@ import icfpc21.classified.solver.{Solver, SolverListener}
 import scala.util.Random
 
 class GenerationalSolver(solverListener: SolverListener) extends Solver {
-  val count = 500
-  val ChildrenPerGeneration = 5
+  val count = 30
+  val ChildrenPerGeneration = 100
   val MutationsPerChild = 5
   val GenerationsCount = 500
 
