@@ -9,8 +9,8 @@ import scala.util.Random
 
 class GenerationalSolver extends Solver {
   val count = 500
-  val ChildrenPerGeneration = 10
-  val MutationsPerChild = 2
+  val ChildrenPerGeneration = 5
+  val MutationsPerChild = 3
   val GenerationsCount = 500
 
   val mutators: Seq[Mutator] = Seq(
@@ -26,7 +26,7 @@ class GenerationalSolver extends Solver {
         val m = mutators(mIdx)
         m.mutate(f, hole, speed = 1d)
       }
-    }
+    } ++ Seq(figure)
   }
 
   override def solve(problem: Problem): Solution = {
@@ -35,7 +35,8 @@ class GenerationalSolver extends Solver {
         s"## Generation $generation: Best score: ${Scorer.score(best, problem)}, " +
           s"fits: ${Scorer.checkFits(best, problem.hole)}, " +
           s"valid: ${Scorer.checkStretchingIsOk(best, problem)}, " +
-          s"dislikes: ${Scorer.scoreDislikes(best, problem.hole)}"
+          s"outside: ${Scorer.scoreOutsidePoints(best, problem.hole)}, " +
+          s"dislikes: ${Scorer.scoreDislikes(best, problem.hole)}           ### " + best
       )
     }
 

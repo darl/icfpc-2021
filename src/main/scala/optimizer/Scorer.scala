@@ -14,6 +14,13 @@ object Scorer {
     }
   }
 
+  def scoreOutsidePoints(figure: Figure, hole: Hole): Double = {
+    figure.vertices
+      .filterNot(p => hole.asPolygon.contains(p.x, p.y))
+      .map(p => hole.segments.map(pair => p.distanceToLine(pair._1, pair._2)).min)
+      .sum
+  }
+
   def checkFits(figure: Figure, hole: Hole): Boolean = {
     val holeEdges = hole.points.indices.dropRight(1).map { i =>
       (i, i + 1)
@@ -77,6 +84,7 @@ object Scorer {
     var result = 0d
     if (checkStretchingIsOk(figure, problem)) result += 10000
     if (checkFits(figure, problem.hole)) result += 1000
+    result -= 100 * scoreOutsidePoints(figure, problem.hole)
     result -= scoreDislikes(figure, problem.hole)
     result
   }

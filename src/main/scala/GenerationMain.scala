@@ -4,7 +4,7 @@ import icfpc21.classified.api.PosesClient
 import icfpc21.classified.optimizer.GenerationalSolver
 
 object GenerationMain extends App {
-  val problemId = 20 // args(1).toInt
+  val problemId = 4 // args(1).toInt
   val client = new PosesClient.Live("https://poses.live", Key.value)
 
   val problem = client.getProblem(problemId)

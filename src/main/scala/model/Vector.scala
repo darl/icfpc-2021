@@ -37,6 +37,23 @@ case class Vector(x: Int, y: Int) {
     }
   }
 
+  def distanceToLine(p1: Vector, p2: Vector): Double = {
+    val px = p2.x - p1.x
+    val py = p2.y - p1.y
+    val tmp = px * px + py * py
+    var u = ((x - p1.x) * px + (y - p1.y) * py).toDouble / tmp
+
+    if (u > 1) {
+      u = 1d
+    } else if (u < 0) u = 0d
+    val x0 = p1.x + u * px
+    val y0 = p1.y + u * py
+
+    val dx = x0 - x
+    val dy = y0 - y
+    Math.sqrt(dx * dx + dy * dy)
+  }
+
 //  def normalize: Vector = widthLength(1)
 
   def round: Vector = {
