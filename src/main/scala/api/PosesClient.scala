@@ -64,7 +64,7 @@ object PosesClient {
         .uri(URI.create(s"$serverUrl/api/problems/$problemId/solutions"))
         .header("Authorization", s"Bearer $apiKey")
         .version(HttpClient.Version.HTTP_1_1)
-        .POST(HttpRequest.BodyPublishers.ofString(body.asString.getOrElse("")))
+        .POST(HttpRequest.BodyPublishers.ofString(body.toString))
         .build()
       val response =
         client.send(request, HttpResponse.BodyHandlers.discarding())

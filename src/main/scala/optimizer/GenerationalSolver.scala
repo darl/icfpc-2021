@@ -4,13 +4,15 @@ package optimizer
 import icfpc21.classified.model.{Figure, Hole, Problem, Solution}
 import optimizer.mutators.{IdentityMutator, MirrorMutator, MovePointMutator, MovePointToEdgeMutator, MovePointToCenterMutator}
 import icfpc21.classified.solver.Solver
+import icfpc21.classified.optimizer.mutators._
+import icfpc21.classified.solver.{Solver, SolverListener}
 
 import scala.util.Random
 
-class GenerationalSolver extends Solver {
+class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val count = 500
   val ChildrenPerGeneration = 5
-  val MutationsPerChild = 3
+  val MutationsPerChild = 5
   val GenerationsCount = 500
 
   val mutators: Seq[Mutator] = Seq(
@@ -18,7 +20,12 @@ class GenerationalSolver extends Solver {
     MovePointMutator,
     MovePointToEdgeMutator,
     MovePointToCenterMutator,
-    IdentityMutator
+    IdentityMutator,
+    SmallMovePointMutator,
+    SmallMovePointMutator,
+    MoveOutsidePointMutator,
+    MoveOutsidePointMutator,
+    MoveOutsidePointMutator,
   )
 
   def generate(figure: Figure, hole: Hole): Seq[Figure] = {
@@ -38,7 +45,7 @@ class GenerationalSolver extends Solver {
           s"fits: ${Scorer.checkFits(best, problem.hole)}, " +
           s"valid: ${Scorer.checkStretchingIsOk(best, problem)}, " +
           s"outside: ${Scorer.scoreOutsidePoints(best, problem.hole)}, " +
-          s"dislikes: ${Scorer.scoreDislikes(best, problem.hole)}           ### " + best
+          s"dislikes: ${Scorer.scoreDislikes(best, problem.hole)}           ### " + Solution(best.vertices)
       )
     }
 
@@ -57,12 +64,15 @@ class GenerationalSolver extends Solver {
       val newGeneration = candidates.flatMap(generate(_, problem.hole))
       val sorted = newGeneration.sortBy(f => Scorer.score(f, problem))
       val selected = sorted.takeRight(count)
+      solverListener.candidates(selected.takeRight(5))
       printScore(generation, selected.last)
       finished = isFinished(selected.last)
 
       candidates = selected
     }
 
-    Solution(candidates.last.vertices)
+    val result = Solution(candidates.last.vertices)
+    solverListener.solution(result)
+    result
   }
 }

@@ -10,6 +10,8 @@ case class Hole(points: Seq[Vector]) {
     points.size
   )
 
+  def isInside(point: Vector): Boolean = asPolygon.contains(point.x, point.y)
+
   def segments: Seq[(Vector, Vector)] =
     (points.sliding(2) ++ Iterator(Seq(points.last, points.head)))
       .map(p => p.head -> p.last)

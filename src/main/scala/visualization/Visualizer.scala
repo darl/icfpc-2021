@@ -2,32 +2,70 @@ package icfpc21.classified
 package visualization
 
 import model._
+import solver.SolverListener
 
 import java.awt.BorderLayout
 import java.awt.event._
+import java.awt.image.BufferedImage
+import java.util.concurrent.CopyOnWriteArrayList
 import javax.swing.JFrame
 
-case class Visualizer(problem: Problem) {
+case class Visualizer(val problem: Problem) extends SolverListener {
+  private val images = new CopyOnWriteArrayList[BufferedImage]()
+  private val lock = new Object
+  private var current = 0
+  private var plane: MyPlane = null
+
   def show() = {
     val frame = new JFrame("Problem visualization")
     frame.setLayout(new BorderLayout())
-    val plane = MyPlane(Renderer.renderProblem(problem), 1)
+    images.add(Renderer.render(problem.hole, Seq(problem.figure)))
+    plane = MyPlane(images.get(0), 1)
     frame.add(plane)
     frame.pack()
     frame.setLocationRelativeTo(null)
     frame.setVisible(true)
 
-    val lock = new Object
-    frame.addWindowListener(new WindowAdapter {
-      override def windowClosing(e: WindowEvent): Unit = {
-        lock.synchronized {
-          lock.notify()
-        }
-      }
-    })
+    frame.addWindowListener(windowListener)
+    frame.addKeyListener(keyListener)
     lock.synchronized {
       lock.wait()
     }
     frame.dispose()
+  }
+
+  override def candidates(figures: Seq[Figure]): Unit = {
+    images.add(Renderer.render(problem.hole, figures))
+  }
+
+  override def solution(solution: Solution): Unit = ()
+
+  private val windowListener = new WindowAdapter {
+    override def windowClosing(e: WindowEvent): Unit = {
+      lock.synchronized {
+        lock.notify()
+      }
+    }
+  }
+
+  private val keyListener: KeyListener = new KeyListener {
+    override def keyTyped(e: KeyEvent): Unit = ()
+
+    override def keyPressed(e: KeyEvent): Unit = {
+      val left = e.getKeyCode == KeyEvent.VK_LEFT && current > 0
+      val right = e.getKeyCode == KeyEvent.VK_RIGHT && current < images.size - 1
+      if (left) {
+        current = current - 1
+      }
+      if (right) {
+        current = current + 1
+      }
+      if (left || right) {
+        plane.image = images.get(current)
+        plane.repaint()
+      }
+    }
+
+    override def keyReleased(e: KeyEvent): Unit = ()
   }
 }
