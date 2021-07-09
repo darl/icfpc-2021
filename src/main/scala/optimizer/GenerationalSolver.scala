@@ -2,7 +2,7 @@ package icfpc21.classified
 package optimizer
 
 import icfpc21.classified.model.{Figure, Hole, Problem, Solution}
-import icfpc21.classified.optimizer.mutators.{IdentityMutator, MirrorMutator, MovePointMutator, SmallMovePointMutator}
+import icfpc21.classified.optimizer.mutators._
 import icfpc21.classified.solver.{Solver, SolverListener}
 
 import scala.util.Random
@@ -10,14 +10,18 @@ import scala.util.Random
 class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val count = 500
   val ChildrenPerGeneration = 5
-  val MutationsPerChild = 3
+  val MutationsPerChild = 5
   val GenerationsCount = 500
 
   val mutators: Seq[Mutator] = Seq(
     MirrorMutator,
     MovePointMutator,
     IdentityMutator,
-    SmallMovePointMutator
+    SmallMovePointMutator,
+    SmallMovePointMutator,
+    MoveOutsidePointMutator,
+    MoveOutsidePointMutator,
+    MoveOutsidePointMutator,
   )
 
   def generate(figure: Figure, hole: Hole): Seq[Figure] = {
@@ -37,7 +41,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
           s"fits: ${Scorer.checkFits(best, problem.hole)}, " +
           s"valid: ${Scorer.checkStretchingIsOk(best, problem)}, " +
           s"outside: ${Scorer.scoreOutsidePoints(best, problem.hole)}, " +
-          s"dislikes: ${Scorer.scoreDislikes(best, problem.hole)}           ### " + best
+          s"dislikes: ${Scorer.scoreDislikes(best, problem.hole)}           ### " + Solution(best.vertices)
       )
     }
 
