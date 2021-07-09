@@ -82,9 +82,9 @@ object Scorer {
 
   def score(figure: Figure, problem: Problem): Double = {
     var result = 0d
-    if (checkStretchingIsOk(figure, problem)) result += 10000
-    if (checkFits(figure, problem.hole)) result += 1000
-    result -= 100 * scoreOutsidePoints(figure, problem.hole)
+    if (checkStretchingIsOk(figure, problem)) result += 100000
+    if (checkFits(figure, problem.hole)) result += 10000
+    result -= 1000 * scoreOutsidePoints(figure, problem.hole)
     result -= scoreDislikes(figure, problem.hole)
     result
   }
