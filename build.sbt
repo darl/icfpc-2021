@@ -13,3 +13,5 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion)
 
 idePackagePrefix := Some("icfpc21.classified")
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test"

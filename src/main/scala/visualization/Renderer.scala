@@ -3,7 +3,7 @@ package visualization
 
 import model._
 
-import java.awt.{Color, Font}
+import java.awt.{Color, Font, Polygon}
 import java.awt.image.BufferedImage
 
 object Renderer {
