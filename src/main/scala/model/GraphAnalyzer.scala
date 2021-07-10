@@ -61,9 +61,9 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
         disjoint = {
           val d = new DisjointSet
           for (edge <- edges) {
-            if (edge.containsPoint(idx)) {
-              // do nothing
-            } else {
+            if (edge.aIndex == idx) d.join(edge.bIndex, edge.bIndex)
+            else if (edge.bIndex == idx) d.join(edge.aIndex, edge.aIndex)
+            else {
               d.join(edge.aIndex, edge.bIndex)
             }
           }
@@ -85,6 +85,8 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
         val d = new DisjointSet
         for (edge <- edges) {
           if (edge.containsPoint(aIndex) || edge.containsPoint(bIndex)) {
+            if (edge.aIndex != aIndex && edge.aIndex != bIndex) d.join(edge.aIndex, edge.aIndex)
+            if (edge.bIndex != aIndex && edge.bIndex != bIndex) d.join(edge.bIndex, edge.bIndex)
             // do nothing
           } else {
             d.join(edge.aIndex, edge.bIndex)

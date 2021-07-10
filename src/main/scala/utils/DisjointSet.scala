@@ -9,7 +9,8 @@ class DisjointSet() {
 
   def get(x: Int): Int =
     if (map.contains(x)) {
-      val result = get(map(x))
+      val g = map(x)
+      val result = if (g == x) g else get(g)
       map.put(x, result)
       result
     } else {
@@ -19,12 +20,10 @@ class DisjointSet() {
   def join(x: Int, y: Int): Unit = {
     val gX = get(x)
     val gY = get(y)
-    if (gX != gY) {
-      if (Random.nextBoolean()) {
-        map.put(gY, gX)
-      } else {
-        map.put(gX, gY)
-      }
+    if (Random.nextBoolean()) {
+      map.put(gY, gX)
+    } else {
+      map.put(gX, gY)
     }
   }
 
