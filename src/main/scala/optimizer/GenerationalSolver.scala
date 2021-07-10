@@ -65,7 +65,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       val newGeneration = candidates.flatMap(generate(_, problem.hole)).distinct
       val sorted = newGeneration.map(f => Scorer.score(f, problem)).sortBy(f => f.total)
       val selected = sorted.takeRight(count)
-      solverListener.candidates(selected.takeRight(20).map(_.figure), problem.bonuses, generation)
+      solverListener.candidates(selected.takeRight(20), problem.bonuses, generation)
       val bestScore = selected.last
       if (lastBest.total != bestScore.total || generation % 20 == 0) {
         printScore(generation, selected.last)

@@ -1,6 +1,7 @@
 package icfpc21.classified
 package visualization
 
+import icfpc21.classified.optimizer.Scorer
 import model._
 
 import java.awt.image.BufferedImage
@@ -32,15 +33,15 @@ object Renderer {
     }
   }
 
-  def render(hole: Hole, figures: Seq[Figure], bonuses: Seq[BonusPoint], generation: Int): Seq[BufferedImage] = {
+  def render(hole: Hole, scores: Seq[Scorer.Score], bonuses: Seq[BonusPoint], generation: Int): Seq[BufferedImage] = {
     val minX = hole.points.map(_.x).min - 10
     val minY = hole.points.map(_.y).min - 10
     val maxY = hole.points.map(_.y).max + 10
     val maxX = hole.points.map(_.x).max + 10
     if (sizeX == 0) { sizeX = (maxX - minX) * scale }
     if (sizeY == 0) { sizeY = (maxY - minY) * scale }
-    figures.zipWithIndex.map {
-      case (figure, index) =>
+    scores.zipWithIndex.map {
+      case (score, index) =>
         val image = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB)
         val g = image.createGraphics()
         g.setFont(new Font("Monospaced", Font.PLAIN, 14))
@@ -63,9 +64,19 @@ object Renderer {
         val points = scala.collection.mutable.HashSet[Int]()
         g.setStroke(new BasicStroke(2))
         g.setColor(colors(index % colors.size))
-        figure.edges.values.foreach { edge =>
-          val a = figure.vertices(edge.aIndex).toScreen
-          val b = figure.vertices(edge.bIndex).toScreen
+        score.figure.edges.values.foreach { edge =>
+          val a = score.figure.vertices(edge.aIndex).toScreen
+          val b = score.figure.vertices(edge.bIndex).toScreen
+//          g.setFont(new Font("Monospaced", Font.PLAIN, 16))
+//          g.setStroke(new BasicStroke(3))
+//          g.drawString(s"Score: ${score.total}", 10, 10)
+//          g.drawString(s"Valid: ${score.valid}", 10, 30)
+//          g.drawString(s"Fits: ${score.fits}", 10, 50)
+//          g.drawString(s"Dislikes: ${score.dislikes}", 10, 70)
+//          g.drawString(s"Bonus: ${score.bonusPoints}", 10, 90)
+          g.setFont(new Font("Monospaced", Font.PLAIN, 8))
+          g.setStroke(new BasicStroke(2))
+
           if (!points.contains(edge.aIndex)) {
             g.drawString(s"${edge.aIndex}", a.x - minX, a.y - minY)
             points.add(edge.aIndex)
@@ -89,7 +100,7 @@ object Renderer {
         g.setStroke(new BasicStroke(3))
         g.setFont(new Font("Monospaced", Font.PLAIN, 16))
         if (index == 0) {
-          g.drawString(s"Generation: $generation", 30, 30)
+          g.drawString(s"Generation: $generation", 10, 110)
         }
 
         g.dispose()
