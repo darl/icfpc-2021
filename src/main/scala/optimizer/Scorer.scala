@@ -115,7 +115,7 @@ object Scorer {
 //      val area = new Area(poly)
 //      area.subtract(new Area(problem.hole.asPolygon))
 //      if (area.isEmpty) 0
-//      else AreaUtils.calcArea(area)
+//      else AreaUtils.approxArea(area, 1d)
 //    }.sum
     val area = new Area(figure.area)
     area.subtract(new Area(problem.hole.asPolygon))
@@ -126,7 +126,7 @@ object Scorer {
     val valid = checkStretchingIsOk(figure, problem)
     val fits = checkFits(figure, problem.hole)
     val dislikes = scoreDislikes(figure, problem.hole)
-    val outsideArea: Double = if (fits) 0d else scoreOutsideArea(figure, problem)
+    val outsideArea: Double = if (true ||fits) 0d else scoreOutsideArea(figure, problem)
 
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)

@@ -29,7 +29,7 @@ class DisjointSet() {
   }
 
   def connectedRegions: Seq[Seq[Int]] =
-    map.keys.groupBy(get).values.map(_.toVector).toVector
+    (map.keys ++ map.values).groupBy(get).values.map(_.toVector).toVector
 
   def isSame(x: Int, y: Int): Boolean = get(x) == get(y)
 }

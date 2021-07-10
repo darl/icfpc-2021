@@ -12,6 +12,12 @@ case class Figure(vertices: IndexedSeq[Vector], edges: Edges) {
       (a, b)
     }
 
+  def updateVertexes(indexes: Seq[Int], f: (Int, Vector) => Vector): Figure = {
+    copy(vertices = indexes.foldLeft(vertices) {
+      case (collection, idx) => collection.updated(idx, f(idx, collection(idx)))
+    })
+  }
+
   def updateVertex(idx: Int, update: Vector => Vector): Figure = {
     copy(vertices = vertices.updated(idx, update(vertices(idx))))
   }

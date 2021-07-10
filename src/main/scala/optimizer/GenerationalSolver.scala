@@ -3,6 +3,7 @@ package optimizer
 
 import icfpc21.classified.model.{Figure, Hole, Problem, Solution}
 import icfpc21.classified.optimizer.mutators._
+import icfpc21.classified.utils.RichIterable
 import icfpc21.classified.solver.{Solver, SolverListener}
 
 import scala.util.Random
@@ -26,14 +27,14 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     MoveOutsidePointMutator,
     TranslateMutator,
     RotateMutator,
-    JointRotateMutator
+    JointRotateMutator,
+    AxeMirrorMutator
   )
 
   def generate(figure: Figure, hole: Hole): Seq[Figure] = {
     (0 until ChildrenPerGeneration).map { _ =>
       (0 until MutationsPerChild).foldLeft(figure) { (f, _) =>
-        val mIdx = Random.nextInt(mutators.size)
-        val m = mutators(mIdx)
+        val m = mutators.random
         m.mutate(f, hole, speed = 1d)
       }
     } ++ Seq(figure)
