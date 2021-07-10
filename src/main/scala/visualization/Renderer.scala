@@ -54,7 +54,7 @@ object Renderer {
     figures.zipWithIndex.foreach {
       case (figure, index) =>
         g.setColor(colors(index))
-        figure.edges.foreach { edge =>
+        figure.edges.values.foreach { edge =>
           val a = figure.vertices(edge.aIndex).toScreen
           val b = figure.vertices(edge.bIndex).toScreen
           g.drawLine(a.x, a.y, b.x, b.y)

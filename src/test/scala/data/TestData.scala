@@ -42,7 +42,7 @@ object TestData {
         Vector(80, 30),
         Vector(80, 40)
       ),
-      edges = Seq(
+      edges = Edges(Seq(
         Edge(2, 5),
         Edge(5, 4),
         Edge(4, 1),
@@ -73,7 +73,7 @@ object TestData {
         Edge(12, 14),
         Edge(5, 10),
         Edge(10, 15)
-      )
+      ))
     )
 
     val submittedFigure: Figure = Figure(

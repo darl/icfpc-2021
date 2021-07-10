@@ -61,7 +61,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     while (generation < GenerationsCount && !finished) {
       generation += 1
       val newGeneration = candidates.flatMap(generate(_, problem.hole)).distinct
-      val sorted = newGeneration.sortBy(f => Scorer.score(f, problem))
+      val sorted = newGeneration.map(f => f -> Scorer.score(f, problem)).sortBy(f => f._2).map(_._1)
       val selected = sorted.takeRight(count)
       solverListener.candidates(selected.takeRight(5) ++ selected.take(2), generation)
       printScore(generation, selected.last)

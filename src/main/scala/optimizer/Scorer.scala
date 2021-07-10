@@ -26,10 +26,10 @@ object Scorer {
       (i, i + 1)
     } :+ (0, hole.points.size - 1)
 
-    val onTheEdge = scala.collection.mutable.HashMap[Vector, Boolean]()
+    val onTheEdge = scala.collection.mutable.HashSet[Vector]()
     val poly = new Polygon(hole.points.map(_.x).toArray, hole.points.map(_.y).toArray, hole.points.size)
 
-    val intersections = figure.edges.forall { edge =>
+    val intersections = figure.edges.values.forall { edge =>
       val q = figure.vertices(edge.aIndex).toDouble
       val s = figure.vertices(edge.bIndex).toDouble - q
       holeEdges.forall {
@@ -48,10 +48,10 @@ object Scorer {
               val t1 = t0 + ((s |*| r) / (r |*| r))
 
               if (t0 >= 0 && t0 <= 1) {
-                onTheEdge.put(figure.vertices(edge.aIndex), true)
+                onTheEdge.add(figure.vertices(edge.aIndex))
               }
               if (t1 >= 0 && t1 <= 1) {
-                onTheEdge.put(figure.vertices(edge.bIndex), true)
+                onTheEdge.add(figure.vertices(edge.bIndex))
               }
               val min = t0.min(t1)
               val max = t0.max(t1)
@@ -70,8 +70,8 @@ object Scorer {
             case (_, 0) => true
             case _ =>
               val u = p1.toDouble / p2
-              if (u == 0) onTheEdge.put(figure.vertices(edge.aIndex), true)
-              if (u == 1) onTheEdge.put(figure.vertices(edge.bIndex), true)
+              if (u == 0) onTheEdge.add(figure.vertices(edge.aIndex))
+              if (u == 1) onTheEdge.add(figure.vertices(edge.bIndex))
               (u <= 0 || u >= 1) || {
                 val t = (q - p).product(s).toDouble / r.product(s)
                 t <= 0 || t >= 1
@@ -80,13 +80,13 @@ object Scorer {
       }
     }
 
-    intersections && figure.vertices.forall(v => onTheEdge.getOrElse(v, poly.contains(v.x, v.y)))
+    intersections && figure.vertices.forall(v => onTheEdge.contains(v) || poly.contains(v.x, v.y))
 
   }
 
   def checkStretchingIsOk(currentF: Figure, problem: Problem): Boolean = {
     val allowedEpsDiff = problem.epsilon.toDouble / 1_000_000
-    problem.figure.edges.forall { edge =>
+    problem.figure.edges.values.forall { edge =>
       val origLength = (problem.figure.vertices(edge.bIndex) - problem.figure.vertices(edge.aIndex)).squaredLength
       val curLength = (currentF.vertices(edge.bIndex) - currentF.vertices(edge.aIndex)).squaredLength
       Math.abs((origLength.toDouble / curLength) - 1) <= allowedEpsDiff

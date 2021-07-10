@@ -43,12 +43,10 @@ object PosesClient {
           val figurePoints = result.figure.vertices
             .map(point => Vector(point.head, point.last))
           Problem(
-            hole =
-              Hole(result.hole.map(point => Vector(point.head, point.last))),
+            hole = Hole(result.hole.map(point => Vector(point.head, point.last))),
             figure = Figure(
               vertices = figurePoints,
-              edges =
-                result.figure.edges.map(edge => Edge(edge.head, edge.last))
+              edges = Edges(result.figure.edges.map(edge => Edge(edge.head, edge.last)))
             ),
             epsilon = result.epsilon
           )

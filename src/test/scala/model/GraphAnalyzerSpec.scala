@@ -7,7 +7,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import scala.collection.immutable.TreeMap
 
 class GraphAnalyzerSpec extends AnyWordSpec {
-  val ga: GraphAnalyzer = GraphAnalyzer(TestData.Example1.originalFigure.edges)
+  val ga: GraphAnalyzer = TestData.Example1.originalFigure.edges.analysis
   "GraphAnalyzer" should {
     "check links" in {
       assert(

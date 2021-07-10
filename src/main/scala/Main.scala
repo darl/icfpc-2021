@@ -23,7 +23,7 @@ object Main extends App {
           Vector(10, 5),
           Vector(0, 8)
         ),
-        edges = Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0))
+        edges = Edges(Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0)))
       ),
       epsilon = 1
     )
