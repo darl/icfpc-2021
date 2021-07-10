@@ -13,9 +13,13 @@ case class Hole(points: Seq[Vector]) {
 
   lazy val asArea = new Area(asPolygon)
 
-  def isInside(point: Vector): Boolean = asPolygon.contains(point.x, point.y)
+  private val pointsPositions = scala.collection.mutable.HashMap[Vector, Boolean]()
 
-  def segments: Seq[(Vector, Vector)] =
+  def isInside(point: Vector): Boolean = {
+    pointsPositions.getOrElseUpdate(point, asPolygon.contains(point.x, point.y))
+  }
+
+  lazy val segments: Seq[(Vector, Vector)] =
     (points.sliding(2) ++ Iterator(Seq(points.last, points.head)))
       .map(p => p.head -> p.last)
       .toVector

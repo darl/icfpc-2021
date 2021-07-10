@@ -55,18 +55,24 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       Scorer.checkStretchingIsOk(best, problem) &&
       Scorer.scoreDislikes(best, problem.hole) == 0d
     }
-    printScore(0, Scorer.score(problem.figure, problem))
+    var lastBest = Scorer.score(problem.figure, problem)
+    printScore(0, lastBest)
 
     var candidates = Seq.fill(count)(problem.figure)
     var generation = 0
     var finished = false
+
     while (generation < GenerationsCount && !finished) {
       generation += 1
       val newGeneration = candidates.flatMap(generate(_, problem.hole)).distinct
       val sorted = newGeneration.map(f => Scorer.score(f, problem)).sortBy(f => f.total)
       val selected = sorted.takeRight(count)
       solverListener.candidates((selected.takeRight(20) ++ selected.take(2)).map(_.figure), generation)
-      printScore(generation, selected.last)
+      val bestScore = selected.last
+      if (lastBest.total != bestScore.total || generation % 20 == 0) {
+        printScore(generation, selected.last)
+      }
+      lastBest = bestScore
       finished = isFinished(selected.last.figure)
 
       candidates = selected.map(_.figure)
