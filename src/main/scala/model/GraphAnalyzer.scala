@@ -12,7 +12,7 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
 
   // Закрытая фигура, полигон
   case class Poly(vertexIndices: Seq[Int]) {
-    def size = vertexIndices.size
+    def size: Int = vertexIndices.size
   }
 
   def polyFromPoint(start: Int, current: Int, visited: Seq[Int]): Seq[Poly] = {
@@ -21,6 +21,7 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
       .flatMap { outer =>
         if (outer == start) List(Poly(visited))
         else if (visited.contains(outer)) List.empty
+        else if (visited.size > 10) List.empty
         else polyFromPoint(start, outer, visited :+ outer)
       }
   }

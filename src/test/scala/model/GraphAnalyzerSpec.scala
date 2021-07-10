@@ -4,6 +4,7 @@ package model
 import icfpc21.classified.data.TestData
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.awt.geom.Area
 import scala.collection.immutable.TreeMap
 
 class GraphAnalyzerSpec extends AnyWordSpec {
@@ -37,6 +38,23 @@ class GraphAnalyzerSpec extends AnyWordSpec {
     }
     "cal polygons" in {
       ga.polygons.foreach(println)
+      assert(ga.polygons.nonEmpty)
+    }
+  }
+
+  "Figure" should {
+    "calculate area" in {
+      println(TestData.Example1.originalFigure.edges.analysis.polygons)
+      println(TestData.Example1.originalFigure.polygons)
+      println(TestData.Example1.originalFigure.area)
+      println(TestData.Example1.originalFigure.area.isEmpty)
+      println(TestData.Example1.originalFigure.area.isSingular)
+      val a = new Area()
+      a.add(TestData.Example1.hole.asArea)
+      a.subtract(TestData.Example1.originalFigure.area)
+      println(a)
+      println(a.isEmpty)
+      println(a.isSingular)
     }
   }
 }

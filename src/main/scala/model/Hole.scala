@@ -2,6 +2,7 @@ package icfpc21.classified
 package model
 
 import java.awt.Polygon
+import java.awt.geom.Area
 
 case class Hole(points: Seq[Vector]) {
   lazy val asPolygon = new Polygon(
@@ -9,6 +10,8 @@ case class Hole(points: Seq[Vector]) {
     points.map(_.y).toArray,
     points.size
   )
+
+  lazy val asArea = new Area(asPolygon)
 
   def isInside(point: Vector): Boolean = asPolygon.contains(point.x, point.y)
 
