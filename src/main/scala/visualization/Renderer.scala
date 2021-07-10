@@ -100,7 +100,8 @@ object Renderer {
         g.setStroke(new BasicStroke(3))
         g.setFont(new Font("Monospaced", Font.PLAIN, 16))
         if (index == 0) {
-          g.drawString(s"Generation: $generation", 10, 110)
+          g.drawString(s"Generation: $generation", 10, 30)
+          g.drawString(s"Dislikes: ${score.dislikes}", 10, 50)
         }
 
         g.dispose()
