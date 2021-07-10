@@ -18,7 +18,7 @@ object Scorer {
   def scoreOutsidePoints(figure: Figure, hole: Hole): Double = {
     figure.vertices
       .filterNot(p => hole.isInside(p))
-      .map(p => hole.segments.map(pair => p.distanceToLine(pair._1, pair._2)).min)
+      .map(p => hole.segments.foldLeft(Double.MaxValue)((m, pair) => m min p.distanceToLine(pair._1, pair._2)))
       .sum
   }
 
@@ -133,14 +133,17 @@ object Scorer {
     val fits = checkFits(figure, problem.hole)
     val dislikes = scoreDislikes(figure, problem.hole)
     val outsideArea: Double = if (true || fits) 0d else scoreOutsideArea(figure, problem)
-    val bonusPoints = 60000 - 100 * closestToBonus(problem.bonuses, figure)
+    val bonus: Double = closestToBonus(problem.bonuses, figure)
+    val bonusPoints = -100 * bonus
 
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)
     val outsideAreaPoints: Double = outsideArea * -10000d
-    val dislikePoints: Double = if (fits) 10000 - dislikes else 0
+    val fitsPoints = if (fits) 100d else 0d
+    val dislikePoints: Double = if (fits) -dislikes else -4 * dislikes
 
-    val total: Double = (stretchingPoints + outsidePoints + outsideAreaPoints + dislikePoints + bonusPoints)
+    val total: Double =
+      (stretchingPoints + outsidePoints + outsideAreaPoints + fitsPoints + dislikePoints + bonusPoints)
   }
 
   def score(figure: Figure, problem: Problem): Score = {

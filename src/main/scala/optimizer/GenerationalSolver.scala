@@ -6,6 +6,8 @@ import icfpc21.classified.optimizer.mutators._
 import icfpc21.classified.utils.RichIterable
 import icfpc21.classified.solver.{Solver, SolverListener}
 
+import scala.collection.parallel.CollectionConverters._
+
 class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val speciesCount = 30
   val ChildrenPerGeneration = 200
@@ -48,10 +50,11 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       )
     }
 
-    def isFinished(best: Figure): Boolean = {
-      Scorer.checkFits(best, problem.hole) &&
-      Scorer.checkStretchingIsOk(best, problem) &&
-      Scorer.scoreDislikes(best, problem.hole) == 0d
+    def isFinished(score: Scorer.Score): Boolean = {
+      score.fits &&
+      score.valid &&
+      score.dislikes == 0d &&
+      score.bonusPoints == 0d
     }
     var lastBest = Scorer.score(problem.figure, problem)
     printScore(0, lastBest)
@@ -70,7 +73,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
         printScore(generation, bestScore)
       }
       lastBest = bestScore
-      finished = isFinished(selected.bestScores.last.figure)
+      finished = isFinished(selected.bestScores.last)
 
       population = selected
     }
@@ -86,7 +89,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
 
     def mutate(problem: Problem): Population = {
       Population(
-        species = species.map(s => s.mutate(problem))
+        species = species.par.map(s => s.mutate(problem)).seq
       )
     }
 
@@ -104,10 +107,11 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
 
     def mutate(problem: Problem): Spices = {
       Spices(
-        members = members
+        members = members.par
           .flatMap(f => generate(f.figure, problem))
           .distinct
           .map(f => Scorer.score(f, problem))
+          .seq
           .sortBy(_.total)
       )
     }

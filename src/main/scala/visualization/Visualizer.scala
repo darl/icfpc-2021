@@ -42,7 +42,7 @@ case class Visualizer(val problem: Problem) extends SolverListener {
     images.add(Renderer.render(problem.hole, scores.reverse, bonuses, generation))
 
     if (playing) {
-      if (images.size() > 50) {
+      while (images.size() > 20) {
         images.remove(0)
       }
       current = images.size() - 1
