@@ -25,11 +25,8 @@ case class TensionMutator(init: Problem) extends Mutator {
         val currentEdge = destinationPoint - point
         val currentDistance = currentEdge.length
         val initialDistance = (init.figure.vertices(destinationIdx) - init.figure.vertices(chosenIdx)).length
-        val delta = currentDistance - initialDistance
 
-        // https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%BA%D0%BE%D0%BD_%D0%93%D1%83%D0%BA%D0%B0
-        val hooke = k * delta
-        val currentForce = currentEdge.scale(1 / currentEdge.length * hooke)
+        val currentForce = currentEdge.scale(currentEdge.length * k * currentDistance / initialDistance)
         force + currentForce
     }
   }
