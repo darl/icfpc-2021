@@ -1,10 +1,9 @@
 package icfpc21.classified
 package optimizer
 
-import icfpc21.classified.model._
-import icfpc21.classified.utils.AreaUtils
+import model._
+import utils.AreaUtils
 
-import java.awt.Polygon
 import java.awt.geom.Area
 
 object Scorer {
@@ -44,9 +43,6 @@ object Scorer {
   def checkFits(figure: Figure, hole: Hole): Boolean = {
     val segments = hole.segments.map(s => (s._1.toDouble, s._2.toDouble)).zipWithIndex
 
-    val onTheEdge = scala.collection.mutable.HashSet[Vector]()
-    val poly = new Polygon(hole.points.map(_.x).toArray, hole.points.map(_.y).toArray, hole.points.size)
-
     val intersections = figure.edges.values.forall { edge =>
       val q = figure.vertices(edge.aIndex).toDouble
       val s = figure.vertices(edge.bIndex).toDouble - q
@@ -66,10 +62,10 @@ object Scorer {
               val t1 = t0 + ((s |*| r) / (r |*| r))
 
               if (t0 >= 0 && t0 <= 1) {
-                onTheEdge.add(figure.vertices(edge.aIndex))
+                hole.setInside(figure.vertices(edge.aIndex))
               }
               if (t1 >= 0 && t1 <= 1) {
-                onTheEdge.add(figure.vertices(edge.bIndex))
+                hole.setInside(figure.vertices(edge.bIndex))
               }
               val min = t0.min(t1)
               val max = t0.max(t1)
@@ -78,7 +74,7 @@ object Scorer {
                 if (max < 0 || max > 1) {
                   var pisechka = q + (s * min)
                   pisechka = pisechka + pisechka.widthLength(0.01)
-                  poly.contains(pisechka.x, pisechka.y) || contains(
+                  hole.asPolygon.contains(pisechka.x, pisechka.y) || contains(
                     segments((i + 1) % segments.size)._1,
                     figure.vertices(edge.bIndex).toDouble
                   )
@@ -86,13 +82,13 @@ object Scorer {
               } else if (max >= 0 && max <= 1) {
                 var pisechka = q + (s * max)
                 pisechka = pisechka + pisechka.widthLength(0.01)
-                poly.contains(pisechka.x, pisechka.y) || contains(segments((i + 1) % segments.size)._1, q)
+                hole.asPolygon.contains(pisechka.x, pisechka.y) || contains(segments((i + 1) % segments.size)._1, q)
               } else false
             case (_, 0) => true
             case _ =>
               val u = p1 / p2
-              if (u == 0) onTheEdge.add(figure.vertices(edge.aIndex))
-              if (u == 1) onTheEdge.add(figure.vertices(edge.bIndex))
+              if (u == 0) hole.setInside(figure.vertices(edge.aIndex))
+              if (u == 1) hole.setInside(figure.vertices(edge.bIndex))
               (u <= 0 || u >= 1) || {
                 val t = (q - p).product(s) / r.product(s)
                 t <= 0 || t >= 1
@@ -101,7 +97,7 @@ object Scorer {
       }
     }
 
-    intersections && figure.vertices.forall(v => onTheEdge.contains(v) || poly.contains(v.x, v.y))
+    intersections && figure.vertices.forall(v => hole.isInside(v))
 
   }
 
@@ -131,7 +127,6 @@ object Scorer {
     val fits = checkFits(figure, problem.hole)
     val dislikes = scoreDislikes(figure, problem.hole)
     val outsideArea: Double = if (fits) 0d else scoreOutsideArea(figure, problem)
-
 
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)

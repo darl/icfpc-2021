@@ -15,6 +15,8 @@ case class Hole(points: Seq[Vector]) {
 
   private val pointsPositions = scala.collection.mutable.HashMap[Vector, Boolean]()
 
+  def setInside(point: Vector) = pointsPositions.put(point, true)
+
   def isInside(point: Vector): Boolean = {
     pointsPositions.getOrElseUpdate(point, asPolygon.contains(point.x, point.y))
   }
