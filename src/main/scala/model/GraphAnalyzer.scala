@@ -34,9 +34,9 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
       .filter(_.size > 2)
   } yield poly
 
-  lazy val joints: Set[Joint] = {
+  lazy val joints: Seq[Joint] = {
     if (links.size == 1) {
-      Set.empty
+      Seq.empty
     } else {
       val candidates = links.map {
         case (index, _) =>
@@ -54,7 +54,7 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
             None
           }
       }
-      candidates.flatten.toSet
+      candidates.flatten.toSet.toSeq
     }
   }
 }
