@@ -1,7 +1,7 @@
 package icfpc21.classified
 package model
 
-import scala.collection.SortedMap
+import scala.collection.{SortedMap, mutable}
 
 case class GraphAnalyzer(edges: Seq[Edge]) {
   val links: SortedMap[Int, Seq[Int]] = edges
@@ -13,6 +13,12 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
   // Закрытая фигура, полигон
   case class Poly(vertexIndices: Seq[Int]) {
     def size: Int = vertexIndices.size
+    def toSet: Set[Int] = vertexIndices.toSet
+    def isInside(other: Poly): Boolean = (toSet -- other.toSet).isEmpty
+  }
+
+  object Poly {
+    implicit val ord: Ordering[Poly] = Ordering.by(p => (p.size, p.vertexIndices.mkString("z")))
   }
 
   def polyFromPoint(start: Int, current: Int, visited: Seq[Int]): Seq[Poly] = {
@@ -26,13 +32,23 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
       }
   }
 
+  private def removeDuplicates(polys: Seq[Poly]) = {
+    val out = new mutable.ListBuffer[Poly]
+    for (poly <- polys.distinct.sorted) {
+      if (!out.exists(_.isInside(poly))) {
+        out += poly
+      }
+    }
+    out.toVector
+  }
+
   // TODO too slow for big figures (eg #77)
-  lazy val polygons: Seq[Poly] = for {
+  lazy val polygons: Seq[Poly] = removeDuplicates(for {
     start <- links.keys.toVector
     poly <- polyFromPoint(start, start, Seq(start))
       .filter(p => p.vertexIndices(0) < p.vertexIndices(1))
       .filter(_.size > 2)
-  } yield poly
+  } yield poly)
 
   lazy val joints: Seq[Joint] = {
     if (links.size == 1) {

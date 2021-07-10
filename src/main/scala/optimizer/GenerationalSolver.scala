@@ -40,13 +40,13 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
   }
 
   override def solve(problem: Problem): Solution = {
-    def printScore(generation: Int, best: Figure): Unit = {
+    def printScore(generation: Int, score: Scorer.Score): Unit = {
       println(
-        s"## Generation $generation: Best score: ${Scorer.score(best, problem)}, " +
-          s"fits: ${Scorer.checkFits(best, problem.hole)}, " +
-          s"valid: ${Scorer.checkStretchingIsOk(best, problem)}, " +
-          s"outside: ${Scorer.scoreOutsidePoints(best, problem.hole)}, " +
-          s"dislikes: ${Scorer.scoreDislikes(best, problem.hole)}           ### " + Solution(best.vertices)
+        s"## Generation $generation: Best score: ${score.total}, " +
+          s"fits: ${score.fits}, " +
+          s"valid: ${score.valid}, " +
+          s"outside: ${score.outsideArea}, " +
+          s"dislikes: ${score.dislikes}           ### " + Solution(score.figure.vertices)
       )
     }
 
@@ -55,7 +55,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       Scorer.checkStretchingIsOk(best, problem) &&
       Scorer.scoreDislikes(best, problem.hole) == 0d
     }
-    printScore(0, problem.figure)
+    printScore(0, Scorer.score(problem.figure, problem))
 
     var candidates = Seq.fill(count)(problem.figure)
     var generation = 0
@@ -63,13 +63,13 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     while (generation < GenerationsCount && !finished) {
       generation += 1
       val newGeneration = candidates.flatMap(generate(_, problem.hole)).distinct
-      val sorted = newGeneration.map(f => f -> Scorer.score(f, problem)).sortBy(f => f._2).map(_._1)
+      val sorted = newGeneration.map(f => Scorer.score(f, problem)).sortBy(f => f.total)
       val selected = sorted.takeRight(count)
-      solverListener.candidates(selected.takeRight(5) ++ selected.take(2), generation)
+      solverListener.candidates((selected.takeRight(5) ++ selected.take(2)).map(_.figure), generation)
       printScore(generation, selected.last)
-      finished = isFinished(selected.last)
+      finished = isFinished(selected.last.figure)
 
-      candidates = selected
+      candidates = selected.map(_.figure)
     }
 
     val result = Solution(candidates.last.vertices)

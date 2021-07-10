@@ -2,8 +2,10 @@ package icfpc21.classified
 package optimizer
 
 import icfpc21.classified.model._
+import icfpc21.classified.utils.AreaUtils
 
 import java.awt.Polygon
+import java.awt.geom.Area
 
 object Scorer {
   def scoreDislikes(figure: Figure, hole: Hole): Double = {
@@ -29,11 +31,11 @@ object Scorer {
     if (crossProduct == 0) {
       false
     } else {
-      val dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y)*(b.y - a.y)
+      val dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y)
       if (dotproduct < 0) {
         false
       } else {
-        val squaredlengthba = (b.x - a.x)*(b.x - a.x) + (b.y - a.y)*(b.y - a.y)
+        val squaredlengthba = (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)
         dotproduct <= squaredlengthba
       }
     }
@@ -76,7 +78,10 @@ object Scorer {
                 if (max < 0 || max > 1) {
                   var pisechka = q + (s * min)
                   pisechka = pisechka + pisechka.widthLength(0.01)
-                  poly.contains(pisechka.x, pisechka.y) || contains(segments((i + 1) % segments.size)._1, figure.vertices(edge.bIndex).toDouble)
+                  poly.contains(pisechka.x, pisechka.y) || contains(
+                    segments((i + 1) % segments.size)._1,
+                    figure.vertices(edge.bIndex).toDouble
+                  )
                 } else true
               } else if (max >= 0 && max <= 1) {
                 var pisechka = q + (s * max)
@@ -109,16 +114,35 @@ object Scorer {
     }
   }
 
-  def score(figure: Figure, problem: Problem): Double = {
-    var result = 0d
-    if (checkStretchingIsOk(figure, problem)) result += 1000000000d
+  def scoreOutsideArea(figure: Figure, problem: Problem): Double = {
+//    figure.polygons.map { poly =>
+//      val area = new Area(poly)
+//      area.subtract(new Area(problem.hole.asPolygon))
+//      if (area.isEmpty) 0
+//      else AreaUtils.calcArea(area)
+//    }.sum
+    val area = new Area(figure.area)
+    area.subtract(new Area(problem.hole.asPolygon))
+    AreaUtils.approxArea(area, 1d)
+  }
+
+  case class Score(figure: Figure, problem: Problem) {
+    val valid = checkStretchingIsOk(figure, problem)
     val fits = checkFits(figure, problem.hole)
-    result -= 10000 * scoreOutsidePoints(figure, problem.hole)
+    val dislikes = scoreDislikes(figure, problem.hole)
+    val outsideArea: Double = scoreOutsideArea(figure, problem)
 
-    if (fits) result += 10000
-    if (fits) result -= scoreDislikes(figure, problem.hole)
 
-    result
+    val stretchingPoints: Double = if (valid) 1000000000d else 0d
+    val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)
+    val outsideAreaPoints: Double = outsideArea * -10000d
+    val fitsPoints: Double = if (fits) 10000 - dislikes else 0
+
+    val total: Double = (stretchingPoints + outsidePoints + outsideAreaPoints + fitsPoints)
+  }
+
+  def score(figure: Figure, problem: Problem): Score = {
+    Score(figure, problem)
   }
 
 }
