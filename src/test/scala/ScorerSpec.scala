@@ -191,7 +191,7 @@ class ScorerSpec extends AnyWordSpec {
     "checkStretchingIsOk returns true on checking stretching of first example" in {
       import TestData.Example1._
       assert(
-        Scorer.checkStretchingIsOk(originalFigure, Problem(hole, submittedFigure, BonusPoint.Zero, epsilon))
+        Scorer.checkStretchingIsOk(originalFigure, Problem(hole, submittedFigure, Seq.empty, epsilon))
       )
     }
     "checkStretchingIsOk returns false" in {
@@ -205,7 +205,7 @@ class ScorerSpec extends AnyWordSpec {
         edges = origFigure.edges
       )
 
-      assert(Scorer.checkStretchingIsOk(origFigure, Problem(hole, submitted, BonusPoint.Zero, 100_000)) === false)
+      assert(Scorer.checkStretchingIsOk(origFigure, Problem(hole, submitted, Seq.empty, 100_000)) === false)
     }
   }
 }

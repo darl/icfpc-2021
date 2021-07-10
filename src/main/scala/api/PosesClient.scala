@@ -49,7 +49,7 @@ object PosesClient {
               vertices = figurePoints,
               edges = Edges(result.figure.edges.map(edge => Edge(edge.head, edge.last)))
             ),
-            bonusPoint = BonusPoint(center = Vector(result.bonus.position(0), result.bonus.position(1))),
+            bonuses = result.bonuses.map(b => BonusPoint(center = Vector(b.position.head, b.position.last))),
             epsilon = result.epsilon
           )
         }
@@ -79,7 +79,7 @@ object PosesClient {
 
   case class FigureDto(edges: List[List[Int]], vertices: List[List[Int]])
   case class BonusPointDto(position: List[Int])
-  case class ProblemDto(hole: List[List[Int]], figure: FigureDto, bonus: BonusPointDto, epsilon: Int)
+  case class ProblemDto(hole: List[List[Int]], figure: FigureDto, bonuses: Seq[BonusPointDto], epsilon: Int)
 
   case class SolutionDto(vertices: Seq[Seq[Int]])
 

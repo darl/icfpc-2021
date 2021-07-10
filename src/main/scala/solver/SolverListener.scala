@@ -1,17 +1,17 @@
 package icfpc21.classified
 package solver
 
-import model.{Figure, Problem, Solution}
+import model.{BonusPoint, Figure, Problem, Solution}
 
 trait SolverListener {
-  def candidates(figures: Seq[Figure], generation: Int): Unit
+  def candidates(figures: Seq[Figure], bonuses: Seq[BonusPoint], generation: Int): Unit
   def solution(solution: Solution): Unit
 }
 
 object SolverListener {
   val NoOp = new SolverListener {
 
-    override def candidates(figures: Seq[Figure], generation: Int): Unit = ()
+    override def candidates(figures: Seq[Figure], bonuses: Seq[BonusPoint], generation: Int): Unit = ()
 
     override def solution(solution: Solution): Unit = ()
   }

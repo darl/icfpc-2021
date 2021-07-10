@@ -32,14 +32,13 @@ object Renderer {
     }
   }
 
-  def render(hole: Hole, figures: Seq[Figure], generation: Int): Seq[BufferedImage] = {
+  def render(hole: Hole, figures: Seq[Figure], bonuses: Seq[BonusPoint], generation: Int): Seq[BufferedImage] = {
     val minX = hole.points.map(_.x).min - 10
     val minY = hole.points.map(_.y).min - 10
-    val maxX = hole.points.map(_.x).max + 10
     val maxY = hole.points.map(_.y).max + 10
+    val maxX = hole.points.map(_.x).max + 10
     if (sizeX == 0) { sizeX = (maxX - minX) * scale }
     if (sizeY == 0) { sizeY = (maxY - minY) * scale }
-
     figures.zipWithIndex.map {
       case (figure, index) =>
         val image = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB)
@@ -76,6 +75,13 @@ object Renderer {
             points.add(edge.bIndex)
           }
           g.drawLine(a.x - minX, a.y - minY, b.x - minX, b.y - minY)
+        }
+
+        //Bonuses
+        g.setColor(new Color(Color.CYAN.getRed, Color.CYAN.getGreen, Color.CYAN.getBlue, 190))
+        bonuses.foreach { bonus =>
+          val c = bonus.center.toScreen
+          g.fillOval(c.x - 10, c.y - 10, 20, 20)
         }
 
         //Text

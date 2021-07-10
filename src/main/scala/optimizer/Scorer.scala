@@ -122,18 +122,25 @@ object Scorer {
     AreaUtils.approxArea(area, 1d)
   }
 
+  def closestToBonus(bonuses: Seq[BonusPoint], figure: Figure): Double = {
+    bonuses.map { bonus =>
+      figure.vertices.map(_.distanceTo(bonus.center)).min
+    }.sum
+  }
+
   case class Score(figure: Figure, problem: Problem) {
     val valid = checkStretchingIsOk(figure, problem)
     val fits = checkFits(figure, problem.hole)
     val dislikes = scoreDislikes(figure, problem.hole)
-    val outsideArea: Double = if (true ||fits) 0d else scoreOutsideArea(figure, problem)
+    val outsideArea: Double = if (true || fits) 0d else scoreOutsideArea(figure, problem)
+    val bonusPoints = (100d / closestToBonus(problem.bonuses, figure)).min(6000)
 
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)
     val outsideAreaPoints: Double = outsideArea * -10000d
     val fitsPoints: Double = if (fits) 10000 - dislikes else 0
 
-    val total: Double = (stretchingPoints + outsidePoints + outsideAreaPoints + fitsPoints)
+    val total: Double = (stretchingPoints + outsidePoints + outsideAreaPoints + fitsPoints + bonusPoints)
   }
 
   def score(figure: Figure, problem: Problem): Score = {

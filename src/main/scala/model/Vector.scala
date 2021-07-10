@@ -100,6 +100,8 @@ case class Vector(x: Int, y: Int) {
   def isZero: Boolean = x == 0 && y == 0
   def nonZero: Boolean = !isZero
 
+  def distanceTo(other: Vector): Double = (this - other).length
+
   def toDouble: VectorD = VectorD(x, y)
 }
 

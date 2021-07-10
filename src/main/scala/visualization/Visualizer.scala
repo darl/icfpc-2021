@@ -16,7 +16,7 @@ case class Visualizer(val problem: Problem) extends SolverListener {
   private var current = 0
   private var mousePos = new Point(1, 1)
 
-  images.add(Renderer.render(problem.hole, Seq(problem.figure), 0))
+  images.add(Renderer.render(problem.hole, Seq(problem.figure), problem.bonuses, 0))
   private val plane: MyPlane = MyPlane(images.get(0), 1)
   var playing = true
 
@@ -37,8 +37,8 @@ case class Visualizer(val problem: Problem) extends SolverListener {
     frame.dispose()
   }
 
-  override def candidates(figures: Seq[Figure], generation: Int): Unit = {
-    images.add(Renderer.render(problem.hole, figures.reverse, generation))
+  override def candidates(figures: Seq[Figure], bonuses: Seq[BonusPoint], generation: Int): Unit = {
+    images.add(Renderer.render(problem.hole, figures.reverse, bonuses, generation))
 
     if (playing) {
       if (images.size() > 50) {
