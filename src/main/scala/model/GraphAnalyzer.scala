@@ -34,9 +34,9 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
       .filter(_.size > 2)
   } yield poly
 
-  lazy val joints: Iterable[Int] = {
+  lazy val joints: Set[Joint] = {
     if (links.size == 1) {
-      Seq.empty
+      Set.empty
     } else {
       val candidates = links.map {
         case (index, _) =>
@@ -49,12 +49,12 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
             links(current).filterNot(visited.contains).filterNot(_ == index).foreach(stack.push)
           }
           if (visited.size < links.size - 1) {
-            Some(index)
+            Some(Joint(index, visited.toSet, links.keys.filterNot(visited.contains).filterNot(_ == index).toSet))
           } else {
             None
           }
       }
-      candidates.flatten
+      candidates.flatten.toSet
     }
   }
 }
