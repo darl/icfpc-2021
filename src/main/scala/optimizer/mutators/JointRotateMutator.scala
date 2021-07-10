@@ -31,8 +31,8 @@ object JointRotateMutator extends Mutator {
 
     val rotateRight = if (Random.nextBoolean()) {
       val angle = Random.nextDouble() * 2 * math.Pi
-      figure.copy(vertices =
-        figure.vertices.zipWithIndex
+      rotateLeft.copy(vertices =
+        rotateLeft.vertices.zipWithIndex
           .map {
             case (v, i) =>
               if (joint.right.contains(i)) {
