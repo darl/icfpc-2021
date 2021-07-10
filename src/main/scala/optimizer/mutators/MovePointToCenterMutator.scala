@@ -23,8 +23,6 @@ object MovePointToCenterMutator extends Mutator {
       else Vector(1, math.round(toCenter.y.toDouble / toCenter.x).toInt)
     val result = vertex + delta
 
-    figure.copy(vertices = figure.vertices.zipWithIndex.map {
-      case (vector, i) => if (i == pointIdx) result else vector
-    })
+    figure.updateVertex(pointIdx, _ => result)
   }
 }

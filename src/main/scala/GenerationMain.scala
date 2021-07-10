@@ -6,12 +6,12 @@ import visualization.Visualizer
 import model._
 
 object GenerationMain extends App {
-  val problemId = 4 // args(1).toInt
+  val problemId = 77 // args(1).toInt
   val client = new PosesClient.Live("https://poses.live", Key.value)
 
   val checkpoints = Map(
-    // dislikes: 288.0
-    4 -> Solution(List(Vector(88,11), Vector(95,27), Vector(95,37), Vector(95,6), Vector(91,33), Vector(90,54), Vector(90,23), Vector(74,32), Vector(74,37), Vector(76,52), Vector(76,57), Vector(70,68), Vector(69,49), Vector(69,62), Vector(52,22), Vector(65,18), Vector(69,29), Vector(64,47), Vector(64,63), Vector(66,88), Vector(59,52), Vector(59,57), Vector(53,73), Vector(49,22), Vector(49,52), Vector(49,57), Vector(35,15), Vector(45,32), Vector(44,37), Vector(44,47), Vector(44,65), Vector(40,92), Vector(39,47), Vector(39,63), Vector(5,50), Vector(34,52), Vector(32,57), Vector(30,70), Vector(23,32), Vector(23,37), Vector(23,52), Vector(5,5), Vector(13,36)))
+    // dislikes: 247.0
+    4 -> Solution(List(Vector(12,11), Vector(5,27), Vector(5,37), Vector(5,6), Vector(9,33), Vector(9,53), Vector(10,23), Vector(26,32), Vector(26,37), Vector(24,52), Vector(24,57), Vector(30,69), Vector(32,51), Vector(31,62), Vector(48,22), Vector(34,17), Vector(31,29), Vector(36,47), Vector(36,63), Vector(31,90), Vector(41,52), Vector(41,57), Vector(47,75), Vector(51,22), Vector(51,52), Vector(51,57), Vector(65,15), Vector(55,32), Vector(56,37), Vector(56,47), Vector(56,66), Vector(60,92), Vector(61,47), Vector(61,63), Vector(94,50), Vector(66,52), Vector(68,57), Vector(70,70), Vector(77,32), Vector(78,37), Vector(78,54), Vector(95,5), Vector(88,36)))
 
   )
 

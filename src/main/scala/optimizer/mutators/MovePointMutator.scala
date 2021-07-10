@@ -16,8 +16,6 @@ object MovePointMutator extends Mutator {
     val yMove = Random.nextInt(yDiff) * Random.nextDouble() * (if (Random.nextBoolean()) 1d else -1d)
     val move = Vector(xMove.round.toInt, yMove.round.toInt)
 
-    figure.copy(vertices = figure.vertices.zipWithIndex.map {
-      case (vector, i) => if (i == pointIdx) vector + move else vector
-    })
+    figure.updateVertex(pointIdx, _ + move)
   }
 }

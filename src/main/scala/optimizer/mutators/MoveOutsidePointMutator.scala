@@ -12,6 +12,7 @@ object MoveOutsidePointMutator extends Mutator {
     if (outside.isEmpty) return figure
     val rndIdx = Random.nextInt(outside.size)
     val point = outside(rndIdx)
+    val idx = figure.vertices.indexOf(point)
     val xDiff = hole.points.map(_.x).max - hole.points.map(_.x).min + 1
     val yDiff = hole.points.map(_.y).max - hole.points.map(_.y).min + 1
 
@@ -19,8 +20,6 @@ object MoveOutsidePointMutator extends Mutator {
     val yMove = Random.nextInt(yDiff) * Random.nextDouble() * (if (Random.nextBoolean()) 1d else -1d)
     val move = Vector(xMove.round.toInt, yMove.round.toInt)
 
-    figure.copy(vertices = figure.vertices.map { vector =>
-      if (vector == point) vector + move else vector
-    })
+    figure.updateVertex(idx, _ + move)
   }
 }
