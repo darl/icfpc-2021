@@ -106,7 +106,7 @@ object Scorer {
     problem.figure.edges.values.forall { edge =>
       val origLength = (problem.figure.vertices(edge.bIndex) - problem.figure.vertices(edge.aIndex)).squaredLength
       val curLength = (currentF.vertices(edge.bIndex) - currentF.vertices(edge.aIndex)).squaredLength
-      Math.abs((origLength.toDouble / curLength) - 1) <= allowedEpsDiff
+      Math.abs((curLength / origLength.toDouble) - 1) <= allowedEpsDiff
     }
   }
 
