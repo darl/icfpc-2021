@@ -6,13 +6,11 @@ import icfpc21.classified.optimizer.mutators._
 import icfpc21.classified.utils.RichIterable
 import icfpc21.classified.solver.{Solver, SolverListener}
 
-import scala.util.Random
-
 class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val count = 30
-  val ChildrenPerGeneration = 100
-  val MutationsPerChild = 8
-  val GenerationsCount = 500
+  val ChildrenPerGeneration = 600
+  val MutationsPerChild = 4
+  val GenerationsCount = 600
 
   val mutators: Seq[Mutator] = Seq(
     MirrorMutator,
@@ -22,8 +20,6 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     MovePointToCenterMutator,
     IdentityMutator,
     SmallMovePointMutator,
-    SmallMovePointMutator,
-    MoveOutsidePointMutator,
     MoveOutsidePointMutator,
     TranslateMutator,
     RotateMutator,
@@ -77,7 +73,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       lastBest = bestScore
       finished = isFinished(selected.last.figure)
 
-      candidates = selected.map(_.figure)
+      candidates = problem.figure +: selected.map(_.figure)
     }
 
     val result = Solution(candidates.last.vertices)

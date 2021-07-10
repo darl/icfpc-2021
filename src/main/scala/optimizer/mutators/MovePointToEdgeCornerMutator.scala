@@ -18,7 +18,9 @@ object MovePointToEdgeCornerMutator extends Mutator {
     val delta =
       if (toEdge.x > toEdge.y && toEdge.y != 0) Vector(math.round(toEdge.x.toDouble / toEdge.y).toInt, 1)
       else Vector(1, math.round(toEdge.y.toDouble / toEdge.x).toInt)
-    val result = vertex + delta
+    val result =
+      if (Random.nextDouble() < 0.1d) edge
+      else vertex + delta
 
     figure.updateVertex(pointIdx, _ => result)
   }
