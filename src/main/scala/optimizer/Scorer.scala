@@ -21,10 +21,26 @@ object Scorer {
       .sum
   }
 
+  private def contains(segment: (VectorD, VectorD), c: VectorD): Boolean = {
+    val (a, b) = segment
+    val crossProduct = (c.y - a.y) * (b.x - a.x) - (c.x - a.x) * (b.y - a.y)
+
+    // compare versus epsilon for floating point values, or != 0 if using integers
+    if (crossProduct == 0) {
+      false
+    } else {
+      val dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y)*(b.y - a.y)
+      if (dotproduct < 0) {
+        false
+      } else {
+        val squaredlengthba = (b.x - a.x)*(b.x - a.x) + (b.y - a.y)*(b.y - a.y)
+        dotproduct <= squaredlengthba
+      }
+    }
+  }
+
   def checkFits(figure: Figure, hole: Hole): Boolean = {
-    val holeEdges = hole.points.indices.dropRight(1).map { i =>
-      (i, i + 1)
-    } :+ (0, hole.points.size - 1)
+    val segments = hole.segments.map(s => (s._1.toDouble, s._2.toDouble)).zipWithIndex
 
     val onTheEdge = scala.collection.mutable.HashSet[Vector]()
     val poly = new Polygon(hole.points.map(_.x).toArray, hole.points.map(_.y).toArray, hole.points.size)
@@ -32,10 +48,10 @@ object Scorer {
     val intersections = figure.edges.values.forall { edge =>
       val q = figure.vertices(edge.aIndex).toDouble
       val s = figure.vertices(edge.bIndex).toDouble - q
-      holeEdges.forall {
-        case (pIndex, rIndex) =>
-          val p = hole.points(pIndex).toDouble
-          val r = hole.points(rIndex).toDouble - p
+      segments.forall {
+        case ((a, b), i) =>
+          val p = a
+          val r = b - p
 
           // https://stackoverflow.com/a/565282
           val p1 = (q - p).product(r)
@@ -60,20 +76,20 @@ object Scorer {
                 if (max < 0 || max > 1) {
                   var pisechka = q + (s * min)
                   pisechka = pisechka + pisechka.widthLength(0.01)
-                  poly.contains(pisechka.x, pisechka.y)
+                  poly.contains(pisechka.x, pisechka.y) || contains(segments((i + 1) % segments.size)._1, figure.vertices(edge.bIndex).toDouble)
                 } else true
               } else if (max >= 0 && max <= 1) {
                 var pisechka = q + (s * max)
                 pisechka = pisechka + pisechka.widthLength(0.01)
-                poly.contains(pisechka.x, pisechka.y)
+                poly.contains(pisechka.x, pisechka.y) || contains(segments((i + 1) % segments.size)._1, q)
               } else false
             case (_, 0) => true
             case _ =>
-              val u = p1.toDouble / p2
+              val u = p1 / p2
               if (u == 0) onTheEdge.add(figure.vertices(edge.aIndex))
               if (u == 1) onTheEdge.add(figure.vertices(edge.bIndex))
               (u <= 0 || u >= 1) || {
-                val t = (q - p).product(s).toDouble / r.product(s)
+                val t = (q - p).product(s) / r.product(s)
                 t <= 0 || t >= 1
               }
           }

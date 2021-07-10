@@ -95,28 +95,28 @@ class ScorerSpec extends AnyWordSpec {
 
       assert(Scorer.checkFits(figure, hole) === true)
     }
-//    "5.count figure as fit" in {
-//      val figure = Figure(
-//        vertices = Seq(
-//          Vector(0, 1),
-//          Vector(0, 10),
-//          Vector(10, 10)
-//        ),
-//        edges = Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0))
-//      )
-//
-//      val hole = Hole(points =
-//        Seq(
-//          Vector(0, 0),
-//          Vector(0, 5),
-//          Vector(0, 10),
-//          Vector(10, 10),
-//          Vector(10, 0)
-//        )
-//      )
-//
-//      assert(Scorer.checkFits(figure, hole) === true)
-//    }
+    "5.count figure as fit" in {
+      val figure = Figure(
+        vertices = Seq(
+          Vector(0, 1),
+          Vector(0, 10),
+          Vector(10, 10)
+        ),
+        edges = Edges(Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0)))
+      )
+
+      val hole = Hole(points =
+        Seq(
+          Vector(0, 0),
+          Vector(0, 5),
+          Vector(0, 10),
+          Vector(10, 10),
+          Vector(10, 0)
+        )
+      )
+
+      assert(Scorer.checkFits(figure, hole) === true)
+    }
 
     "6.count figure as not fit" in {
       val figure = Figure(
