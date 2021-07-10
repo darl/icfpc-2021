@@ -7,7 +7,7 @@ import icfpc21.classified.utils.RichIterable
 import icfpc21.classified.solver.{Solver, SolverListener}
 
 class GenerationalSolver(solverListener: SolverListener) extends Solver {
-  val count = 30
+  val speciesCount = 30
   val ChildrenPerGeneration = 600
   val MutationsPerChild = 4
   val GenerationsCount = 600
@@ -33,7 +33,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
         val m = mutators.random
         m.mutate(f, hole, speed = 1d)
       }
-    } ++ Seq(figure)
+    }
   }
 
   override def solve(problem: Problem): Solution = {
@@ -56,28 +56,60 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     var lastBest = Scorer.score(problem.figure, problem)
     printScore(0, lastBest)
 
-    var candidates = Seq.fill(count)(problem.figure)
+    var population = Population(Seq.fill(speciesCount)(Spices(Seq(lastBest))))
     var generation = 0
     var finished = false
 
     while (generation < GenerationsCount && !finished) {
       generation += 1
-      val newGeneration = candidates.flatMap(generate(_, problem.hole)).distinct
-      val sorted = newGeneration.map(f => Scorer.score(f, problem)).sortBy(f => f.total)
-      val selected = sorted.takeRight(count)
-      solverListener.candidates(selected.takeRight(20), problem.bonuses, generation)
-      val bestScore = selected.last
+      val newGeneration = population.mutate(problem)
+      val selected = newGeneration.select
+      solverListener.candidates(selected.bestScores.map(_.figure).reverse, problem.bonuses, generation)
+      val bestScore = selected.bestScores.last
       if (lastBest.total != bestScore.total || generation % 20 == 0) {
-        printScore(generation, selected.last)
+        printScore(generation, bestScore)
       }
       lastBest = bestScore
-      finished = isFinished(selected.last.figure)
+      finished = isFinished(selected.bestScores.last.figure)
 
-      candidates = problem.figure +: selected.map(_.figure)
+      population = selected
     }
 
-    val result = Solution(candidates.last.vertices)
+    val result = Solution(population.bestScores.last.figure.vertices)
     solverListener.solution(result)
     result
+  }
+
+  case class Population(species: Seq[Spices]) {
+
+    lazy val bestScores: Seq[Scorer.Score] = species.map(_.bestOne).sortBy(_.total)
+
+    def mutate(problem: Problem): Population = {
+      Population(
+        species = species.map(s => s.mutate(problem))
+      )
+    }
+
+    def select: Population = {
+      Population(
+        species = bestScores.drop(1).map { score =>
+          Spices(Seq(score))
+        } :+ Spices(Seq(bestScores.last))
+      )
+    }
+  }
+
+  case class Spices(members: Seq[Scorer.Score]) {
+    lazy val bestOne: Scorer.Score = members.last
+
+    def mutate(problem: Problem): Spices = {
+      Spices(
+        members = members
+          .flatMap(f => generate(f.figure, problem.hole))
+          .distinct
+          .map(f => Scorer.score(f, problem))
+          .sortBy(_.total)
+      )
+    }
   }
 }
