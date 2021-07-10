@@ -2,7 +2,13 @@ package icfpc21.classified
 package optimizer
 
 import icfpc21.classified.model.{Figure, Hole, Problem, Solution}
-import optimizer.mutators.{IdentityMutator, MirrorMutator, MovePointMutator, MovePointToEdgeMutator, MovePointToCenterMutator}
+import optimizer.mutators.{
+  IdentityMutator,
+  MirrorMutator,
+  MovePointMutator,
+  MovePointToEdgeMutator,
+  MovePointToCenterMutator
+}
 import icfpc21.classified.solver.Solver
 import icfpc21.classified.optimizer.mutators._
 import icfpc21.classified.solver.{Solver, SolverListener}
@@ -25,7 +31,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     SmallMovePointMutator,
     MoveOutsidePointMutator,
     MoveOutsidePointMutator,
-    MoveOutsidePointMutator,
+    MoveOutsidePointMutator
   )
 
   def generate(figure: Figure, hole: Hole): Seq[Figure] = {
@@ -64,7 +70,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       val newGeneration = candidates.flatMap(generate(_, problem.hole))
       val sorted = newGeneration.sortBy(f => Scorer.score(f, problem))
       val selected = sorted.takeRight(count)
-      solverListener.candidates(selected.takeRight(5))
+      solverListener.candidates(selected.takeRight(5), generation)
       printScore(generation, selected.last)
       finished = isFinished(selected.last)
 

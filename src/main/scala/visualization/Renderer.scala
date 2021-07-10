@@ -31,7 +31,7 @@ object Renderer {
     }
   }
 
-  def render(hole: Hole, figures: Seq[Figure]): BufferedImage = {
+  def render(hole: Hole, figures: Seq[Figure], generation: Int): BufferedImage = {
     val image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
     val g = image.createGraphics()
     g.setFont(new Font("Monospaced", Font.PLAIN, 14))
@@ -61,11 +61,11 @@ object Renderer {
         }
     }
 
-    // Data
     //Text
     g.setColor(Color.RED)
     g.setStroke(new BasicStroke(3))
-    g.setFont(new Font("Monospaced", Font.PLAIN, 36))
+    g.setFont(new Font("Monospaced", Font.PLAIN, 16))
+    g.drawString(s"Generation: $generation", 100, 300)
 
     g.dispose()
     image
