@@ -50,6 +50,8 @@ object Renderer {
     )
 
     //Figures
+    g.setFont(new Font("Monospaced", Font.PLAIN, 8))
+    val points = scala.collection.mutable.HashSet[Int]()
     g.setStroke(new BasicStroke(2))
     figures.zipWithIndex.foreach {
       case (figure, index) =>
@@ -57,6 +59,14 @@ object Renderer {
         figure.edges.values.foreach { edge =>
           val a = figure.vertices(edge.aIndex).toScreen
           val b = figure.vertices(edge.bIndex).toScreen
+          if (!points.contains(edge.aIndex)) {
+            g.drawString(s"${edge.aIndex}", a.x, a.y)
+            points.add(edge.aIndex)
+          }
+          if (!points.contains(edge.bIndex)) {
+            g.drawString(s"${edge.bIndex}", b.x, b.y)
+            points.add(edge.bIndex)
+          }
           g.drawLine(a.x, a.y, b.x, b.y)
         }
     }

@@ -33,4 +33,27 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
       .filter(p => p.vertexIndices(0) < p.vertexIndices(1))
       .filter(_.size > 2)
   } yield poly
+
+  lazy val joints: Iterable[Int] = {
+    if (links.size == 1) {
+      Seq.empty
+    } else {
+      val candidates = links.map { case (index, _) =>
+        val someOther = if (index == 0) 1 else 0
+        val stack = scala.collection.mutable.Stack(someOther)
+        val visited = scala.collection.mutable.HashSet[Int]()
+        while (stack.nonEmpty) {
+          val current = stack.pop()
+          visited.add(current)
+          links(current).filterNot(visited.contains).foreach(stack.push)
+        }
+        if (visited.size < links.size - 1) {
+          Some(index)
+        } else {
+          None
+        }
+      }
+      candidates.flatten
+    }
+  }
 }
