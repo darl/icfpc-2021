@@ -14,21 +14,21 @@ case class Visualizer(val problem: Problem) extends SolverListener {
   private val images = new CopyOnWriteArrayList[BufferedImage]()
   private val lock = new Object
   private var current = 0
-  private var plane: MyPlane = null
+
+  images.add(Renderer.render(problem.hole, Seq(problem.figure), 0))
+  private val plane: MyPlane = MyPlane(images.get(0), 1)
   var playing = true
 
   def show() = {
     val frame = new JFrame("Problem visualization")
     frame.setLayout(new BorderLayout())
-    images.add(Renderer.render(problem.hole, Seq(problem.figure), 0))
-    plane = MyPlane(images.get(0), 1)
     frame.add(plane)
     frame.pack()
     frame.setLocationRelativeTo(null)
-    frame.setVisible(true)
-
     frame.addWindowListener(windowListener)
     frame.addKeyListener(keyListener)
+
+    frame.setVisible(true)
     lock.synchronized {
       lock.wait()
     }
