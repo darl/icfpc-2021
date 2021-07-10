@@ -23,7 +23,7 @@ object JointRotateMutator extends Mutator {
             figure.vertices.zipWithIndex
               .map {
                 case (v, i) =>
-                  if (joint.left.contains(i)) {
+                  if (joint.subgroups.head.contains(i)) {
                     v.rotateAround(rotationCenter, angle)
                   } else {
                     v
@@ -38,7 +38,7 @@ object JointRotateMutator extends Mutator {
             rotateLeft.vertices.zipWithIndex
               .map {
                 case (v, i) =>
-                  if (joint.right.contains(i)) {
+                  if (joint.subgroups.last.contains(i)) {
                     v.rotateAround(rotationCenter, angle)
                   } else {
                     v
