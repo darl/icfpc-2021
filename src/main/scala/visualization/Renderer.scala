@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage
 import java.awt.{BasicStroke, Color, Font}
 
 object Renderer {
-  val size = 1200
+  val size = 500
   val scale = 4
 
   private val colors = Seq(
@@ -24,38 +24,38 @@ object Renderer {
 
     def toScreen: Vector = {
       Vector(
-        x = vector.x * scale + (size / 2),
-        y = vector.y * scale + (size / 2)
+        x = vector.x * scale,
+        y = vector.y * scale
       )
 
     }
   }
 
-  def render(hole: Hole, figures: Seq[Figure], generation: Int): BufferedImage = {
-    val image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
-    val g = image.createGraphics()
-    g.setFont(new Font("Monospaced", Font.PLAIN, 14))
-
-    //Background
-    g.setColor(Color.LIGHT_GRAY)
-    g.fillRect(0, 0, size, size)
-
-    //Hole
-    g.setColor(Color.WHITE)
-    val holePoints = hole.points.map(_.toScreen)
-    g.fillPolygon(
-      holePoints.map(_.x).toArray,
-      holePoints.map(_.y).toArray,
-      holePoints.size
-    )
-
-    //Figures
-    g.setFont(new Font("Monospaced", Font.PLAIN, 8))
-    val points = scala.collection.mutable.HashSet[Int]()
-    g.setStroke(new BasicStroke(2))
-    figures.zipWithIndex.foreach {
+  def render(hole: Hole, figures: Seq[Figure], generation: Int): Seq[BufferedImage] =
+    figures.zipWithIndex.map {
       case (figure, index) =>
-        g.setColor(colors(index))
+        val image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
+        val g = image.createGraphics()
+        g.setFont(new Font("Monospaced", Font.PLAIN, 14))
+
+        //Background
+        g.setColor(Color.LIGHT_GRAY)
+        g.fillRect(0, 0, size, size)
+
+        //Hole
+        g.setColor(Color.WHITE)
+        val holePoints = hole.points.map(_.toScreen)
+        g.fillPolygon(
+          holePoints.map(_.x).toArray,
+          holePoints.map(_.y).toArray,
+          holePoints.size
+        )
+
+        //Figures
+        g.setFont(new Font("Monospaced", Font.PLAIN, 8))
+        val points = scala.collection.mutable.HashSet[Int]()
+        g.setStroke(new BasicStroke(2))
+        g.setColor(colors(index % colors.size))
         figure.edges.values.foreach { edge =>
           val a = figure.vertices(edge.aIndex).toScreen
           val b = figure.vertices(edge.bIndex).toScreen
@@ -69,16 +69,17 @@ object Renderer {
           }
           g.drawLine(a.x, a.y, b.x, b.y)
         }
+
+        //Text
+        g.setColor(Color.RED)
+        g.setStroke(new BasicStroke(3))
+        g.setFont(new Font("Monospaced", Font.PLAIN, 16))
+        if (index == 0) {
+          g.drawString(s"Generation: $generation", 30, 30)
+        }
+
+        g.dispose()
+        image
     }
-
-    //Text
-    g.setColor(Color.RED)
-    g.setStroke(new BasicStroke(3))
-    g.setFont(new Font("Monospaced", Font.PLAIN, 16))
-    g.drawString(s"Generation: $generation", 100, 300)
-
-    g.dispose()
-    image
-  }
 
 }

@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import javax.swing.JFrame
 
 case class Visualizer(val problem: Problem) extends SolverListener {
-  private val images = new CopyOnWriteArrayList[BufferedImage]()
+  private val images = new CopyOnWriteArrayList[Seq[BufferedImage]]()
   private val lock = new Object
   private var current = 0
   private var mousePos = new Point(1, 1)
@@ -45,7 +45,7 @@ case class Visualizer(val problem: Problem) extends SolverListener {
         images.remove(0)
       }
       current = images.size() - 1
-      plane.image = images.get(current)
+      plane.images = images.get(current)
       plane.repaint()
     }
   }
@@ -74,14 +74,14 @@ case class Visualizer(val problem: Problem) extends SolverListener {
         current = current + 1
       }
       if (left || right) {
-        plane.image = images.get(current)
+        plane.images = images.get(current)
         playing = false
         plane.repaint()
       }
       if (e.getKeyCode == KeyEvent.VK_SPACE) {
         playing = true
         current = images.size() - 1
-        plane.image = images.get(current)
+        plane.images = images.get(current)
         plane.repaint()
       }
       if (e.getKeyCode == KeyEvent.VK_UP) {
