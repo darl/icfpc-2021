@@ -7,7 +7,8 @@ import java.awt.image.BufferedImage
 import java.awt.{BasicStroke, Color, Font}
 
 object Renderer {
-  val size = 500
+  var sizeX = 0
+  var sizeY = 0
   val scale = 4
 
   private val colors = Seq(
@@ -31,23 +32,30 @@ object Renderer {
     }
   }
 
-  def render(hole: Hole, figures: Seq[Figure], generation: Int): Seq[BufferedImage] =
+  def render(hole: Hole, figures: Seq[Figure], generation: Int): Seq[BufferedImage] = {
+    val minX = hole.points.map(_.x).min - 10
+    val minY = hole.points.map(_.y).min - 10
+    val maxX = hole.points.map(_.x).max + 10
+    val maxY = hole.points.map(_.y).max + 10
+    if (sizeX == 0) { sizeX = (maxX - minX) * scale }
+    if (sizeY == 0) { sizeY = (maxY - minY) * scale }
+
     figures.zipWithIndex.map {
       case (figure, index) =>
-        val image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
+        val image = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB)
         val g = image.createGraphics()
         g.setFont(new Font("Monospaced", Font.PLAIN, 14))
 
         //Background
         g.setColor(Color.LIGHT_GRAY)
-        g.fillRect(0, 0, size, size)
+        g.fillRect(0, 0, sizeX, sizeY)
 
         //Hole
         g.setColor(Color.WHITE)
         val holePoints = hole.points.map(_.toScreen)
         g.fillPolygon(
-          holePoints.map(_.x).toArray,
-          holePoints.map(_.y).toArray,
+          holePoints.map(_.x - minX).toArray,
+          holePoints.map(_.y - minY).toArray,
           holePoints.size
         )
 
@@ -60,14 +68,14 @@ object Renderer {
           val a = figure.vertices(edge.aIndex).toScreen
           val b = figure.vertices(edge.bIndex).toScreen
           if (!points.contains(edge.aIndex)) {
-            g.drawString(s"${edge.aIndex}", a.x, a.y)
+            g.drawString(s"${edge.aIndex}", a.x - minX, a.y - minY)
             points.add(edge.aIndex)
           }
           if (!points.contains(edge.bIndex)) {
-            g.drawString(s"${edge.bIndex}", b.x, b.y)
+            g.drawString(s"${edge.bIndex}", b.x - minX, b.y - minY)
             points.add(edge.bIndex)
           }
-          g.drawLine(a.x, a.y, b.x, b.y)
+          g.drawLine(a.x - minX, a.y - minY, b.x - minX, b.y - minY)
         }
 
         //Text
@@ -81,5 +89,6 @@ object Renderer {
         g.dispose()
         image
     }
+  }
 
 }

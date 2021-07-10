@@ -16,14 +16,13 @@ case class MyPlane(var images: Seq[BufferedImage], var scale: Double = 4) extend
 
   override def paintComponent(g: Graphics): Unit = {
     super.paintComponent(g)
-    val rows = Math.ceil(Math.sqrt(images.size)).toInt
     val columns = Math.floor(Math.sqrt(images.size)).toInt
     val width = (images.head.getWidth * scale).toInt
     val height = (images.head.getHeight * scale).toInt
     images.zipWithIndex.foreach {
       case (image, index) =>
-        val offsetX = (index / columns) * width + xOffset
-        val offsetY = (index % columns) * height + yOffset
+        val offsetX = ((index / columns) * width) + xOffset
+        val offsetY = ((index % columns) * height) + yOffset
         g.drawImage(
           image,
           offsetX,
