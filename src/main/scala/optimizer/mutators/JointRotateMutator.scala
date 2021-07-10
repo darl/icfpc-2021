@@ -8,8 +8,10 @@ import scala.util.Random
 
 object JointRotateMutator extends Mutator {
   override def mutate(figure: Figure, hole: Hole, speed: Double): Figure = {
-
     val joints = figure.edges.analysis.joints
+    if (joints.isEmpty) {
+      return figure
+    }
     val joint = joints.random
 
     val rotationCenter = figure.vertices(joint.index)
