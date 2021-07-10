@@ -28,7 +28,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       TranslateMutator,
       RotateMutator,
       JointRotateMutator,
-      new PhysicsMutator(PhysicsMutator.figureTensionForce(problem))
+      TensionMutator(problem)
     )
 
     def generate(figure: Figure, hole: Hole): Seq[Figure] = {
