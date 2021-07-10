@@ -10,8 +10,25 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
     .map { case (key, value) => key -> value.map(_._2).toVector.sorted }
     .to(SortedMap)
 
-//  val polygons = for {
-//    start <- links.keys
-//    poly <- ???
-//  } yield poly
+  // Закрытая фигура, полигон
+  case class Poly(vertexIndices: Seq[Int]) {
+    def size = vertexIndices.size
+  }
+
+  def polyFromPoint(start: Int, current: Int, visited: Seq[Int]): Seq[Poly] = {
+    val outerPoints = links.getOrElse(current, Seq.empty)
+    outerPoints
+      .flatMap { outer =>
+        if (outer == start) List(Poly(visited))
+        else if (visited.contains(outer)) List.empty
+        else polyFromPoint(start, outer, visited :+ outer)
+      }
+  }
+
+  val polygons: Seq[Poly] = for {
+    start <- links.keys.toVector
+    poly <- polyFromPoint(start, start, Seq(start))
+      .filter(p => p.vertexIndices(0) < p.vertexIndices(1))
+      .filter(_.size > 2)
+  } yield poly
 }
