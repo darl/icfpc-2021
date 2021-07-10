@@ -6,7 +6,7 @@ import visualization.Visualizer
 import model._
 
 object GenerationMain extends App {
-  val problemId = 8 // args(1).toInt
+  val problemId = 88 // args(1).toInt
   val client = new PosesClient.Live("https://poses.live", Key.value)
 
   val checkpoints = Map(

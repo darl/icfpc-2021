@@ -1,13 +1,14 @@
 package icfpc21.classified
 package optimizer.mutators
 
-import icfpc21.classified.model.{Figure, Hole, Vector}
+import icfpc21.classified.model.{Figure, Hole, Problem, Vector}
 import icfpc21.classified.optimizer.Mutator
 
 import scala.util.Random
 
 object MoveOutsidePointMutator extends Mutator {
-  override def mutate(figure: Figure, hole: Hole, speed: Double): Figure = {
+  override def mutate(figure: Figure, problem: Problem, speed: Double): Figure = {
+    import problem.hole
     val outside = figure.vertices.filterNot(p => hole.isInside(p))
     if (outside.isEmpty) return figure
     val rndIdx = Random.nextInt(outside.size)

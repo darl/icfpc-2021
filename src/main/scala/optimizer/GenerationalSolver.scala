@@ -27,11 +27,11 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     AxeMirrorMutator
   )
 
-  def generate(figure: Figure, hole: Hole): Seq[Figure] = {
+  def generate(figure: Figure, problem: Problem): Seq[Figure] = {
     (0 until ChildrenPerGeneration).map { _ =>
       (0 until MutationsPerChild).foldLeft(figure) { (f, _) =>
         val m = mutators.random
-        m.mutate(f, hole, speed = 1d)
+        m.mutate(f, problem, speed = 1d)
       }
     } ++ Seq(figure)
   }
@@ -62,7 +62,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
 
     while (generation < GenerationsCount && !finished) {
       generation += 1
-      val newGeneration = candidates.flatMap(generate(_, problem.hole)).distinct
+      val newGeneration = candidates.flatMap(generate(_, problem)).distinct
       val sorted = newGeneration.map(f => Scorer.score(f, problem)).sortBy(f => f.total)
       val selected = sorted.takeRight(count)
       solverListener.candidates(selected.takeRight(20), problem.bonuses, generation)
