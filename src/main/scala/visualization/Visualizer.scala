@@ -4,7 +4,7 @@ package visualization
 import model._
 import solver.SolverListener
 
-import java.awt.BorderLayout
+import java.awt.{BorderLayout, FlowLayout, Point, Scrollbar}
 import java.awt.event._
 import java.awt.image.BufferedImage
 import java.util.concurrent.CopyOnWriteArrayList
@@ -14,6 +14,7 @@ case class Visualizer(val problem: Problem) extends SolverListener {
   private val images = new CopyOnWriteArrayList[BufferedImage]()
   private val lock = new Object
   private var current = 0
+  private var mousePos = new Point(1, 1)
 
   images.add(Renderer.render(problem.hole, Seq(problem.figure), 0))
   private val plane: MyPlane = MyPlane(images.get(0), 1)
@@ -21,12 +22,13 @@ case class Visualizer(val problem: Problem) extends SolverListener {
 
   def show() = {
     val frame = new JFrame("Problem visualization")
-    frame.setLayout(new BorderLayout())
+    frame.setLayout(new FlowLayout())
     frame.add(plane)
     frame.pack()
     frame.setLocationRelativeTo(null)
     frame.addWindowListener(windowListener)
     frame.addKeyListener(keyListener)
+    frame.addMouseMotionListener(mouseMotionListener)
 
     frame.setVisible(true)
     lock.synchronized {
@@ -78,8 +80,30 @@ case class Visualizer(val problem: Problem) extends SolverListener {
         plane.image = images.get(current)
         plane.repaint()
       }
+      if (e.getKeyCode == KeyEvent.VK_UP) {
+        plane.scale = plane.scale + 0.25
+        plane.repaint()
+      }
+      if (e.getKeyCode == KeyEvent.VK_DOWN) {
+        plane.scale = plane.scale - 0.25
+        plane.repaint()
+      }
     }
 
     override def keyReleased(e: KeyEvent): Unit = ()
   }
+
+  private val mouseMotionListener = new MouseMotionListener {
+    override def mouseDragged(mouseEvent: MouseEvent): Unit = {
+      plane.xOffset += (mouseEvent.getX - mousePos.getX).toInt
+      plane.yOffset += (mouseEvent.getY - mousePos.getY).toInt
+      mousePos = mouseEvent.getPoint
+      plane.repaint()
+    }
+
+    override def mouseMoved(mouseEvent: MouseEvent): Unit = {
+      mousePos = mouseEvent.getPoint
+    }
+  }
+
 }

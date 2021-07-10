@@ -97,7 +97,7 @@ class ScorerSpec extends AnyWordSpec {
     }
     "5.count figure as fit" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(0, 1),
           Vector(0, 10),
           Vector(10, 10)
