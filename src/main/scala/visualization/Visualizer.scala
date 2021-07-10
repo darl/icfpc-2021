@@ -38,7 +38,7 @@ case class Visualizer(val problem: Problem) extends SolverListener {
   }
 
   override def candidates(figures: Seq[Figure], generation: Int): Unit = {
-    images.add(Renderer.render(problem.hole, figures, generation))
+    images.add(Renderer.render(problem.hole, figures.reverse, generation))
 
     if (playing) {
       if (images.size() > 50) {
