@@ -20,7 +20,7 @@ object TestData {
     )
 
     val originalFigure: Figure = Figure(
-      vertices = Seq(
+      vertices = IndexedSeq(
         Vector(20, 30),
         Vector(20, 40),
         Vector(30, 95),
@@ -78,7 +78,7 @@ object TestData {
 
     val submittedFigure: Figure = Figure(
       edges = originalFigure.edges,
-      vertices = Seq(
+      vertices = IndexedSeq(
         Vector(21, 28),
         Vector(31, 28),
         Vector(31, 87),

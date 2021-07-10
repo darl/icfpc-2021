@@ -11,7 +11,7 @@ class ScorerSpec extends AnyWordSpec {
   "Scorer" should {
     "1.count figure as fit" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(1, 1),
           Vector(3, 1),
           Vector(2, 3)
@@ -32,7 +32,7 @@ class ScorerSpec extends AnyWordSpec {
     }
     "2.count figure as non fit" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(1, 1),
           Vector(30, 1),
           Vector(2, 3)
@@ -53,7 +53,7 @@ class ScorerSpec extends AnyWordSpec {
     }
     "3.count figure as fit" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(0, 5),
           Vector(10, 5),
           Vector(5, 10)
@@ -74,7 +74,7 @@ class ScorerSpec extends AnyWordSpec {
     }
     "4.count figure as fit" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(5, 5),
           Vector(2, 10),
           Vector(5, 10),
@@ -120,7 +120,7 @@ class ScorerSpec extends AnyWordSpec {
 
     "6.count figure as not fit" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(0, 1),
           Vector(10, 5),
           Vector(1, 9)
@@ -142,7 +142,7 @@ class ScorerSpec extends AnyWordSpec {
     }
     "7.Super tricky test not fits" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(0, 2),
           Vector(10, 5),
           Vector(0, 8)
@@ -166,7 +166,7 @@ class ScorerSpec extends AnyWordSpec {
     }
     "8.Super tricky test fits" in {
       val figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(0, 2),
           Vector(10, 5),
           Vector(0, 8)
@@ -196,12 +196,12 @@ class ScorerSpec extends AnyWordSpec {
     }
     "checkStretchingIsOk returns false" in {
       val origFigure = Figure(
-        vertices = Seq(Vector(0, 0), Vector(0, 1), Vector(1, 1)),
+        vertices = IndexedSeq(Vector(0, 0), Vector(0, 1), Vector(1, 1)),
         edges = Edges(Seq(Edge(0, 1), Edge(1, 2), Edge(2, 0)))
       )
 
       val submitted = Figure(
-        vertices = Seq(Vector(0, 0), Vector(0, 1), Vector(2, 2)),
+        vertices = IndexedSeq(Vector(0, 0), Vector(0, 1), Vector(2, 2)),
         edges = origFigure.edges
       )
 

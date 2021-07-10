@@ -41,7 +41,7 @@ object PosesClient {
       decode[ProblemDto](body)
         .map { result =>
           val figurePoints = result.figure.vertices
-            .map(point => Vector(point.head, point.last))
+            .map(point => Vector(point.head, point.last)).toVector
           Problem(
             hole = Hole(result.hole.map(point => Vector(point.head, point.last))),
             figure = Figure(

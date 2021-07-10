@@ -25,7 +25,8 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
       }
   }
 
-  val polygons: Seq[Poly] = for {
+  // TODO too slow for big figures (eg #77)
+  lazy val polygons: Seq[Poly] = for {
     start <- links.keys.toVector
     poly <- polyFromPoint(start, start, Seq(start))
       .filter(p => p.vertexIndices(0) < p.vertexIndices(1))

@@ -18,7 +18,7 @@ object Main extends App {
         )
       ),
       figure = Figure(
-        vertices = Seq(
+        vertices = IndexedSeq(
           Vector(0, 2),
           Vector(10, 5),
           Vector(0, 8)

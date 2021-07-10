@@ -95,7 +95,7 @@ object Scorer {
 
   def score(figure: Figure, problem: Problem): Double = {
     var result = 0d
-    if (checkStretchingIsOk(figure, problem)) result += 10000000d
+    if (checkStretchingIsOk(figure, problem)) result += 1000000000d
     val fits = checkFits(figure, problem.hole)
     result -= 10000 * scoreOutsidePoints(figure, problem.hole)
 
