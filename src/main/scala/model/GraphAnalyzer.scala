@@ -38,20 +38,21 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
     if (links.size == 1) {
       Seq.empty
     } else {
-      val candidates = links.map { case (index, _) =>
-        val someOther = if (index == 0) 1 else 0
-        val stack = scala.collection.mutable.Stack(someOther)
-        val visited = scala.collection.mutable.HashSet[Int]()
-        while (stack.nonEmpty) {
-          val current = stack.pop()
-          visited.add(current)
-          links(current).filterNot(visited.contains).foreach(stack.push)
-        }
-        if (visited.size < links.size - 1) {
-          Some(index)
-        } else {
-          None
-        }
+      val candidates = links.map {
+        case (index, _) =>
+          val someOther = if (index == 0) 1 else 0
+          val stack = scala.collection.mutable.Stack(someOther)
+          val visited = scala.collection.mutable.HashSet[Int]()
+          while (stack.nonEmpty) {
+            val current = stack.pop()
+            visited.add(current)
+            links(current).filterNot(visited.contains).filterNot(_ == index).foreach(stack.push)
+          }
+          if (visited.size < links.size - 1) {
+            Some(index)
+          } else {
+            None
+          }
       }
       candidates.flatten
     }

@@ -38,7 +38,11 @@ class GraphAnalyzerSpec extends AnyWordSpec {
     }
     "calculate non empty set of joints" in {
       val analyzer = TestData.Example3.originalFigure.edges.analysis
-      assert(analyzer.joints.size == 8)
+      assert(analyzer.joints.size == 16)
+    }
+    "calculate empty set of joints" in {
+      val analyzer = TestData.Example1.originalFigure.edges.analysis
+      assert(analyzer.joints.isEmpty)
     }
     "cal polygons" in {
       ga.polygons.foreach(println)
