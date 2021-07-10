@@ -1,6 +1,8 @@
 package icfpc21.classified
 package model
 
+import icfpc21.classified.utils.DisjointSet
+
 import scala.collection.{SortedMap, mutable}
 
 case class GraphAnalyzer(edges: Seq[Edge]) {
@@ -73,4 +75,26 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
       candidates.flatten.toSet.toSeq
     }
   }
+
+  lazy val axes: Seq[Axe] = {
+    for {
+      aIndex <- links.keys
+      bIndex <- links.keys
+      if aIndex < bIndex
+
+      disjoint = {
+        val d = new DisjointSet
+        for (edge <- edges) {
+          if (edge.containsPoint(aIndex) || edge.containsPoint(bIndex)) {
+            // do nothing
+          } else {
+            d.join(edge.aIndex, edge.bIndex)
+          }
+        }
+        d
+      }
+      if disjoint.connectedRegions.sizeIs > 1
+
+    } yield Axe(aIndex, bIndex, disjoint.connectedRegions)
+  }.toVector
 }

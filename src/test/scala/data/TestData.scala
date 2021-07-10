@@ -225,4 +225,13 @@ object TestData {
     val epsilon = 180000
   }
 
+  object Example11 {
+    val hole: Hole = Hole(List(Vector(10, 0), Vector(10, 10), Vector(0, 10)))
+
+    val originalFigure: Figure =
+      Figure(IndexedSeq(Vector(0, 0), Vector(10, 0), Vector(10, 10)), Edges(List(Edge(0, 1), Edge(1, 2), Edge(2, 0))))
+
+    val epsilon = 0
+  }
+
 }

@@ -44,6 +44,14 @@ class GraphAnalyzerSpec extends AnyWordSpec {
       val analyzer = TestData.Example1.originalFigure.edges.analysis
       assert(analyzer.joints.isEmpty)
     }
+    "calculate non empty set of axes" in {
+      val analyzer = TestData.Example1.originalFigure.edges.analysis
+      assert(analyzer.axes.nonEmpty)
+    }
+    "calculate empty set of axes" in {
+      val analyzer = TestData.Example11.originalFigure.edges.analysis
+      assert(analyzer.axes.isEmpty)
+    }
     "cal polygons" in {
       ga.polygons.foreach(println)
       assert(ga.polygons.nonEmpty)

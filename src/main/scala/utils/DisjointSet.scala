@@ -17,10 +17,14 @@ class DisjointSet() {
     }
 
   def join(x: Int, y: Int): Unit = {
-    if (Random.nextBoolean()) {
-      map.put(get(y), get(x))
-    } else {
-      map.put(get(x), get(y))
+    val gX = get(x)
+    val gY = get(y)
+    if (gX != gY) {
+      if (Random.nextBoolean()) {
+        map.put(gY, gX)
+      } else {
+        map.put(gX, gY)
+      }
     }
   }
 
