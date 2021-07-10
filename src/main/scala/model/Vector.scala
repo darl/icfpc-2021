@@ -56,6 +56,16 @@ case class Vector(x: Int, y: Int) {
     Math.sqrt(dx * dx + dy * dy)
   }
 
+  def rotateAround(center: Vector, angle: Double): Vector = {
+    val aCos = math.cos(angle)
+    val aSin = math.sin(angle)
+
+    VectorD(
+      aCos * (x - center.x) - aSin * (y - center.y) + center.x,
+      aSin * (x - center.x) + aCos * (y - center.y) + center.y
+    ).round
+  }
+
 //  def normalize: Vector = widthLength(1)
 
   def round: Vector = {

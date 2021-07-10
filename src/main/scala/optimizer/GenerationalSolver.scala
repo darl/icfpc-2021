@@ -25,6 +25,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     MoveOutsidePointMutator,
     MoveOutsidePointMutator,
     TranslateMutator,
+    RotateMutator,
   )
 
   def generate(figure: Figure, hole: Hole): Seq[Figure] = {
