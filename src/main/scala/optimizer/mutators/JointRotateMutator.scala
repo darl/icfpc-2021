@@ -8,45 +8,14 @@ import scala.util.Random
 
 object JointRotateMutator extends Mutator {
   override def mutate(figure: Figure, hole: Hole, speed: Double): Figure = {
-    val joints = figure.edges.analysis.joints.filter(_ => Random.nextBoolean())
-    if (joints.isEmpty) {
-      return figure
-    }
+    if (figure.edges.analysis.joints.isEmpty) return figure
 
-    joints.foldLeft(figure) {
-      case (figure, joint) =>
-        val rotationCenter = figure.vertices(joint.index)
+    val angle = Random.nextDouble() * 2 * math.Pi
+    val joint = figure.edges.analysis.joints.random
+    val center = figure.vertices(joint.index)
 
-        val rotateLeft = {
-          val angle = Random.nextDouble() * 2 * math.Pi
-          figure.copy(vertices =
-            figure.vertices.zipWithIndex
-              .map {
-                case (v, i) =>
-                  if (joint.subgroups.head.contains(i)) {
-                    v.rotateAround(rotationCenter, angle)
-                  } else {
-                    v
-                  }
-              }
-          )
-        }
+    val randomSegment = joint.subgroups.random
 
-        val rotateRight = if (Random.nextBoolean()) {
-          val angle = Random.nextDouble() * 2 * math.Pi
-          rotateLeft.copy(vertices =
-            rotateLeft.vertices.zipWithIndex
-              .map {
-                case (v, i) =>
-                  if (joint.subgroups.last.contains(i)) {
-                    v.rotateAround(rotationCenter, angle)
-                  } else {
-                    v
-                  }
-              }
-          )
-        } else rotateLeft
-        rotateRight
-    }
+    figure.updateVertexes(randomSegment, (_, vector) => vector.rotateAround(center, angle))
   }
 }
