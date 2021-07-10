@@ -13,33 +13,34 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val MutationsPerChild = 8
   val GenerationsCount = 500
 
-  val mutators: Seq[Mutator] = Seq(
-    MirrorMutator,
-    MovePointMutator,
-    MovePointToEdgeCenterMutator,
-    MovePointToEdgeCornerMutator,
-    MovePointToCenterMutator,
-    IdentityMutator,
-    SmallMovePointMutator,
-    SmallMovePointMutator,
-    MoveOutsidePointMutator,
-    MoveOutsidePointMutator,
-    TranslateMutator,
-    RotateMutator,
-    JointRotateMutator
-  )
-
-  def generate(figure: Figure, hole: Hole): Seq[Figure] = {
-    (0 until ChildrenPerGeneration).map { _ =>
-      (0 until MutationsPerChild).foldLeft(figure) { (f, _) =>
-        val mIdx = Random.nextInt(mutators.size)
-        val m = mutators(mIdx)
-        m.mutate(f, hole, speed = 1d)
-      }
-    } ++ Seq(figure)
-  }
-
   override def solve(problem: Problem): Solution = {
+    val mutators: Seq[Mutator] = Seq(
+      MirrorMutator,
+      MovePointMutator,
+      MovePointToEdgeCenterMutator,
+      MovePointToEdgeCornerMutator,
+      MovePointToCenterMutator,
+      IdentityMutator,
+      SmallMovePointMutator,
+      SmallMovePointMutator,
+      MoveOutsidePointMutator,
+      MoveOutsidePointMutator,
+      TranslateMutator,
+      RotateMutator,
+      JointRotateMutator,
+      new PhysicsMutator(PhysicsMutator.figureTensionForce(problem))
+    )
+
+    def generate(figure: Figure, hole: Hole): Seq[Figure] = {
+      (0 until ChildrenPerGeneration).map { _ =>
+        (0 until MutationsPerChild).foldLeft(figure) { (f, _) =>
+          val mIdx = Random.nextInt(mutators.size)
+          val m = mutators(mIdx)
+          m.mutate(f, hole, speed = 1d)
+        }
+      } ++ Seq(figure)
+    }
+
     def printScore(generation: Int, score: Scorer.Score): Unit = {
       println(
         s"## Generation $generation: Best score: ${score.total}, " +
