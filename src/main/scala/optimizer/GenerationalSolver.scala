@@ -8,8 +8,8 @@ import icfpc21.classified.solver.{Solver, SolverListener}
 
 class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val speciesCount = 30
-  val ChildrenPerGeneration = 600
-  val MutationsPerChild = 4
+  val ChildrenPerGeneration = 100
+  val MutationsPerChild = 3
   val GenerationsCount = 600
 
   val mutators: Seq[Mutator] = Seq(
@@ -64,7 +64,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       generation += 1
       val newGeneration = population.mutate(problem)
       val selected = newGeneration.select
-      solverListener.candidates(selected.bestScores.map(_.figure).reverse, problem.bonuses, generation)
+      solverListener.candidates(selected.bestScores.reverse, problem.bonuses, generation)
       val bestScore = selected.bestScores.last
       if (lastBest.total != bestScore.total || generation % 20 == 0) {
         printScore(generation, bestScore)
