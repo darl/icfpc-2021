@@ -2,14 +2,6 @@ package icfpc21.classified
 package optimizer
 
 import icfpc21.classified.model.{Figure, Hole, Problem, Solution}
-import optimizer.mutators.{
-  IdentityMutator,
-  MirrorMutator,
-  MovePointMutator,
-  MovePointToEdgeMutator,
-  MovePointToCenterMutator
-}
-import icfpc21.classified.solver.Solver
 import icfpc21.classified.optimizer.mutators._
 import icfpc21.classified.solver.{Solver, SolverListener}
 
@@ -18,7 +10,7 @@ import scala.util.Random
 class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val count = 30
   val ChildrenPerGeneration = 100
-  val MutationsPerChild = 5
+  val MutationsPerChild = 8
   val GenerationsCount = 500
 
   val mutators: Seq[Mutator] = Seq(
@@ -31,7 +23,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     SmallMovePointMutator,
     MoveOutsidePointMutator,
     MoveOutsidePointMutator,
-    MoveOutsidePointMutator
+    TranslateMutator,
   )
 
   def generate(figure: Figure, hole: Hole): Seq[Figure] = {
@@ -67,10 +59,10 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     var finished = false
     while (generation < GenerationsCount && !finished) {
       generation += 1
-      val newGeneration = candidates.flatMap(generate(_, problem.hole))
+      val newGeneration = candidates.flatMap(generate(_, problem.hole)).distinct
       val sorted = newGeneration.sortBy(f => Scorer.score(f, problem))
       val selected = sorted.takeRight(count)
-      solverListener.candidates(selected.takeRight(5), generation)
+      solverListener.candidates(selected.takeRight(5) ++ selected.take(2), generation)
       printScore(generation, selected.last)
       finished = isFinished(selected.last)
 
