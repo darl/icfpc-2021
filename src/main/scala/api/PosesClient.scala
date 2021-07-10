@@ -41,13 +41,15 @@ object PosesClient {
       decode[ProblemDto](body)
         .map { result =>
           val figurePoints = result.figure.vertices
-            .map(point => Vector(point.head, point.last)).toVector
+            .map(point => Vector(point.head, point.last))
+            .toVector
           Problem(
             hole = Hole(result.hole.map(point => Vector(point.head, point.last))),
             figure = Figure(
               vertices = figurePoints,
               edges = Edges(result.figure.edges.map(edge => Edge(edge.head, edge.last)))
             ),
+            bonusPoint = BonusPoint(center = Vector(result.bonus.position(0), result.bonus.position(1))),
             epsilon = result.epsilon
           )
         }
@@ -76,11 +78,13 @@ object PosesClient {
   }
 
   case class FigureDto(edges: List[List[Int]], vertices: List[List[Int]])
-  case class ProblemDto(hole: List[List[Int]], figure: FigureDto, epsilon: Int)
+  case class BonusPointDto(position: List[Int])
+  case class ProblemDto(hole: List[List[Int]], figure: FigureDto, bonus: BonusPointDto, epsilon: Int)
 
   case class SolutionDto(vertices: Seq[Seq[Int]])
 
   implicit val figureDecoder: Decoder[FigureDto] = deriveDecoder[FigureDto]
+  implicit val bonusPointDtoDecoder: Decoder[BonusPointDto] = deriveDecoder[BonusPointDto]
   implicit val problemDecoder: Decoder[ProblemDto] = deriveDecoder[ProblemDto]
 
   implicit val solutionEncoder: Encoder[SolutionDto] =
