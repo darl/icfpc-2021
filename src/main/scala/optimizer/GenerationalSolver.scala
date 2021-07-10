@@ -16,7 +16,8 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
   val mutators: Seq[Mutator] = Seq(
     MirrorMutator,
     MovePointMutator,
-    MovePointToEdgeMutator,
+    MovePointToEdgeCenterMutator,
+    MovePointToEdgeCornerMutator,
     MovePointToCenterMutator,
     IdentityMutator,
     SmallMovePointMutator,
