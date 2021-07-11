@@ -27,8 +27,8 @@ object MovePointGene extends GeneGenerator {
     figure.vertices.indices.map { point =>
       val a = Random.nextDouble()
       val b = Random.nextDouble()
-      val xMutate = if (a < 0.05) -1 else if (a > 0.95) 1 else 0
-      val yMutate = if (b < 0.05) -1 else if (b > 0.95) 1 else 0
+      val xMutate = if (a < 0.02) -1 else if (a > 0.98) 1 else 0
+      val yMutate = if (b < 0.02) -1 else if (b > 0.98) 1 else 0
       val move = Vector(xMutate, yMutate)
       MovePointGene(point, move)
     }

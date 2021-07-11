@@ -22,7 +22,7 @@ case class Agent(problem: Problem, genes: Seq[Gene]) {
       problem,
       genes.zip(other.genes).map {
         case (a, b) =>
-          if (Random.nextDouble() < 0.02) a else b
+          if (Random.nextDouble() < 0.03) b else a
       }
     )
   }

@@ -16,8 +16,8 @@ class EvolutionSolver(solverListener: SolverListener) extends Solver {
     JointRotateGene,
     AxeMirrorGene,
     MirrorGene,
-    MovePointGene,
-    MoveOutsidePointGene
+    MovePointGene
+//    MoveOutsidePointGene
   )
 
   override def solve(problem: Problem): Solution = {
