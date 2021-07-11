@@ -11,6 +11,9 @@ case class Hole(points: Seq[Vector]) {
     points.size
   )
 
+  lazy val xDiff = points.map(_.x).max - points.map(_.x).min + 1
+  lazy val yDiff = points.map(_.y).max - points.map(_.y).min + 1
+
   val width: Int = points.map(_.x).max - points.map(_.x).min
   val height: Int = points.map(_.y).max - points.map(_.y).min
 

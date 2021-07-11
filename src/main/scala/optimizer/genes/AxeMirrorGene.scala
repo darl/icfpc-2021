@@ -27,7 +27,7 @@ case class AxeMirrorGene(problem: Problem, axesToMirror: Map[Axe, Seq[Seq[Int]]]
       Seq(newAxe -> newAxe.subgroups.randomN(1))
     } else Seq.empty
 
-    val axesToDelete = if (Random.nextBoolean()) {
+    val axesToDelete = if (Random.nextBoolean() && axesToMirror.nonEmpty) {
       Seq(axesToMirror.keys.toSeq.random)
     } else Seq.empty
 
@@ -39,6 +39,11 @@ case class AxeMirrorGene(problem: Problem, axesToMirror: Map[Axe, Seq[Seq[Int]]]
       problem,
       result.map {
         case (key, value) =>
+          if (Random.nextBoolean()) {
+            key -> key.subgroups.randomN(key.subgroups.size)
+          } else {
+            key -> value
+          }
       }
     )
   }
@@ -53,7 +58,7 @@ object AxeMirrorGene extends GeneGenerator {
         figure.edges.analysis.axes
           .randomN(3)
           .map { axe =>
-            axe -> axe.subgroups.randomN(2)
+            axe -> axe.subgroups.randomN(axe.subgroups.size)
           }
           .toMap
       )

@@ -8,14 +8,16 @@ import solver.{Solver, SolverListener}
 
 class EvolutionSolver(solverListener: SolverListener) extends Solver {
   val speciesCount = 30
-  val MutationsPerChild = 3
   val GenerationsCount = 600
 
   val genes: Seq[GeneGenerator] = Seq(
     TranslateGene,
     RotateGene,
     JointRotateGene,
-    AxeMirrorGene
+    AxeMirrorGene,
+    MirrorGene,
+//    MovePointGene,
+    MoveOutsidePointGene
   )
 
   override def solve(problem: Problem): Solution = {
@@ -47,20 +49,21 @@ class EvolutionSolver(solverListener: SolverListener) extends Solver {
 
     while (generation < GenerationsCount && !finished) {
       generation += 1
-      val newGeneration = population.mutate
-      val selected = newGeneration.select
-      solverListener.candidates(selected.bestScores.reverse.take(20).map(_.score), problem.bonuses, generation)
-      val bestScore = selected.bestScores.last
+      val newGeneration = population.cross
+      val mutated = newGeneration.mutate
+      val selected = mutated.select
+      solverListener.candidates(selected.bestScores.take(20).map(_.score), problem.bonuses, generation)
+      val bestScore = selected.bestScores.head
       if (lastBest.total != bestScore.score.total || generation % 20 == 0) {
         printScore(generation, bestScore.score)
       }
       lastBest = bestScore.score
-      finished = isFinished(selected.bestScores.last.score)
+      finished = isFinished(selected.bestScores.head.score)
 
       population = selected
     }
 
-    val result = Solution(population.bestScores.last.figure.vertices)
+    val result = Solution(population.bestScores.head.figure.vertices)
     solverListener.solution(result)
     result
   }

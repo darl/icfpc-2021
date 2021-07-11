@@ -6,7 +6,7 @@ import optimizer.evolution.EvolutionSolver
 import visualization.Visualizer
 
 object GenerationMain extends App {
-  val problemId = 1 // args(1).toInt
+  val problemId = 2 // args(1).toInt
   val client = new PosesClient.Live("https://poses.live", Key.value)
 
   val problem = client.getProblem(problemId)

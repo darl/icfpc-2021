@@ -138,7 +138,7 @@ object Scorer {
     val dislikes = scoreDislikes(figure, problem.hole)
     val outsideArea: Double = if (skipArea || fits) 0d else scoreOutsideArea(figure, problem)
     val bonus: Double = closestToBonus(problem.bonuses, figure)
-    val bonusPoints = -100 * bonus
+    val bonusPoints = -50 * bonus
 
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)
