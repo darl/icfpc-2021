@@ -9,4 +9,8 @@ package object utils {
       seq(Random.nextInt(seq.size))
     }
   }
+  implicit class RichDouble(val v: Double) {
+    def randomSign: Double =
+      v * (if (Random.nextBoolean()) 1d else -1d)
+  }
 }
