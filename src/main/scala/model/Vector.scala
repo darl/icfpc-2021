@@ -72,17 +72,14 @@ case class Vector(x: Int, y: Int) {
     val B = -(b.x - a.x)
     val C = -A * a.x - B * a.y
 
-    val M = math.sqrt(A * A + B * B)
-    val A1 = A / M
-    val B1 = B / M
-    val C1 = C / M
+    val M2 = A * A + B * B
 
-    val D = A1 * x + B1 * y + C1
+    val DM = A * x + B * y + C
 
-    VectorD(
-      x - 2 * A1 * D,
-      y - 2 * B1 * D
-    ).round
+    Vector(
+      (x.toLong - 2L * A * DM.toLong / M2.toLong).toInt,
+      (y.toLong - 2L * B * DM.toLong / M2.toLong).toInt
+    )
   }
 
 //  def normalize: Vector = widthLength(1)

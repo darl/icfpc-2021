@@ -92,7 +92,7 @@ object Renderer {
         g.setColor(new Color(Color.CYAN.getRed, Color.CYAN.getGreen, Color.CYAN.getBlue, 190))
         bonuses.foreach { bonus =>
           val c = bonus.center.toScreen
-          g.fillOval(c.x - 10, c.y - 10, 20, 20)
+          g.fillOval(c.x - 10 - minX, c.y - 10 - minY, 20, 20)
         }
 
         //Text
