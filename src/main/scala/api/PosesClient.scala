@@ -2,23 +2,29 @@ package icfpc21.classified
 package api
 
 import icfpc21.classified.model._
-import java.net.{HttpURLConnection, URI}
-import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 
+import java.net.{HttpURLConnection, URI, URL}
+import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 import io.circe._
 import io.circe.syntax._
 import io.circe.parser._
 import io.circe.generic.semiauto._
+import org.jsoup.Jsoup
+
+import java.time.Instant
+import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 trait PosesClient {
 
   def getProblem(problemId: Int): Problem
   def submitSolution(problemId: Int, solution: Solution): Unit
+  def getLastSubmission(problemId: Int): Option[Submission]
 }
 
 object PosesClient {
 
-  class Live(serverUrl: String, apiKey: String) extends PosesClient {
+  class Live(serverUrl: String, apiKey: String, session: String) extends PosesClient {
 
     private val client = HttpClient.newBuilder().build()
 
@@ -70,11 +76,36 @@ object PosesClient {
         client.send(request, HttpResponse.BodyHandlers.discarding())
       val status = response.statusCode()
       if (status != HttpURLConnection.HTTP_OK) {
-        println("Unexpected server response:")
-        println("HTTP code: " + status)
-        System.exit(2)
+        sys.error("Unexpected server response: " + "HTTP code: " + status)
       }
     }
+
+    def getLastSubmission(problemId: Int): Option[Submission] = {
+      val doc = Jsoup
+        .connect(s"$serverUrl/problems/$problemId")
+        .cookie("session", session)
+        .timeout(4000)
+        .get()
+
+      doc
+        .body()
+        .getElementsByTag("table")
+        .first()
+        .getElementsByTag("tr")
+        .asScala
+        .drop(1)
+        .headOption
+        .map { row =>
+          val dateStr = row.getElementsByTag("td").first().text()
+          val date = Instant.parse(dateStr)
+          val href = row.getElementsByTag("a").first().attr("href")
+          val id = href.stripPrefix("/solutions/")
+          val dislikesText = row.getElementsByTag("td").last().text()
+          val dislikes = Try(dislikesText.toInt).toOption
+          Submission(id, date, dislikes.nonEmpty, dislikes)
+        }
+    }
+
   }
 
   case class FigureDto(edges: List[List[Int]], vertices: List[List[Int]])
