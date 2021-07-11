@@ -1,17 +1,17 @@
 package icfpc21.classified
 package optimizer.mutators
 
-import optimizer.Mutator
-import model.{Figure, Hole, Problem, Vector}
-import utils._
-
-import scala.util.Random
+import icfpc21.classified.model.{Figure, Problem}
+import icfpc21.classified.optimizer.Mutator
+import icfpc21.classified.utils._
 
 object JointRotateMutator extends Mutator {
+
   override def mutate(figure: Figure, problem: Problem, speed: Double): Figure = {
     if (figure.edges.analysis.joints.isEmpty) return figure
 
-    val angle = Random.nextDouble() * 2 * math.Pi
+    val angle = MagicNumbers.randomAngle
+
     val joint = figure.edges.analysis.joints.random
     val center = figure.vertices(joint.index)
 

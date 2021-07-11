@@ -101,13 +101,17 @@ object Scorer {
 
   }
 
-  def checkStretchingIsOk(currentF: Figure, problem: Problem): Boolean = {
+  def findInvalidEdges(figure: Figure, problem: Problem): Seq[Edge] = {
     val allowedEpsDiff = problem.epsilon.toDouble / 1_000_000
-    problem.figure.edges.values.forall { edge =>
+    problem.figure.edges.values.filter { edge =>
+      val curLength = (figure.vertices(edge.bIndex) - figure.vertices(edge.aIndex)).squaredLength
       val origLength = (problem.figure.vertices(edge.bIndex) - problem.figure.vertices(edge.aIndex)).squaredLength
-      val curLength = (currentF.vertices(edge.bIndex) - currentF.vertices(edge.aIndex)).squaredLength
       Math.abs((curLength / origLength.toDouble) - 1) <= allowedEpsDiff
     }
+  }
+
+  def checkStretchingIsOk(currentF: Figure, problem: Problem): Boolean = {
+    findInvalidEdges(currentF, problem).isEmpty
   }
 
   def scoreOutsideArea(figure: Figure, problem: Problem): Double = {
@@ -128,26 +132,29 @@ object Scorer {
     }.sum
   }
 
-  case class Score(figure: Figure, problem: Problem) {
+  case class Score(figure: Figure, problem: Problem, skipArea: Boolean) {
     val valid = checkStretchingIsOk(figure, problem)
     val fits = checkFits(figure, problem.hole)
     val dislikes = scoreDislikes(figure, problem.hole)
-    val outsideArea: Double = if (true || fits) 0d else scoreOutsideArea(figure, problem)
+    val outsideArea: Double = if (skipArea || fits) 0d else scoreOutsideArea(figure, problem)
     val bonus: Double = closestToBonus(problem.bonuses, figure)
     val bonusPoints = -100 * bonus
 
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)
-    val outsideAreaPoints: Double = outsideArea * -10000d
-    val fitsPoints = if (fits) 100d else 0d
+    val outsideAreaPoints: Double = outsideArea * -100000d
+    val fitsPoints = if (fits) 100000d else 0d
     val dislikePoints: Double = if (fits) -dislikes else -4 * dislikes
 
     val total: Double =
       (stretchingPoints + outsidePoints + outsideAreaPoints + fitsPoints + dislikePoints + bonusPoints)
+
+    val totalDebug =
+      s"$stretchingPoints + $outsidePoints + $outsideAreaPoints + $fitsPoints + $dislikePoints + $bonusPoints"
   }
 
-  def score(figure: Figure, problem: Problem): Score = {
-    Score(figure, problem)
+  def score(figure: Figure, problem: Problem, skipArea: Boolean): Score = {
+    Score(figure, problem, skipArea)
   }
 
 }

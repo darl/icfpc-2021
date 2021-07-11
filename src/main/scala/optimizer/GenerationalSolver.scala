@@ -56,7 +56,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
       score.dislikes == 0d &&
       score.bonusPoints == 0d
     }
-    var lastBest = Scorer.score(problem.figure, problem)
+    var lastBest = Scorer.score(problem.figure, problem, false)
     printScore(0, lastBest)
 
     var population = Population(Seq.fill(speciesCount)(Spices(Seq(lastBest))))
@@ -110,7 +110,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
         members = members.par
           .flatMap(f => generate(f.figure, problem))
           .distinct
-          .map(f => Scorer.score(f, problem))
+          .map(f => Scorer.score(f, problem, skipArea = bestOne.fits))
           .seq
           .sortBy(_.total)
       )

@@ -9,7 +9,7 @@ import scala.util.Random
 object RotateMutator extends Mutator {
   override def mutate(figure: Figure, problem: Problem, speed: Double): Figure = {
     import problem.hole
-    val angle = Random.nextDouble() * 2 * math.Pi
+    val angle = MagicNumbers.randomAngle
 
     val holeCenter = Vector(
       x = Math.round((hole.points.map(_.x).max + hole.points.map(_.x).min) / 2.0).toInt,
