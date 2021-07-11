@@ -46,6 +46,9 @@ object Scorer {
     val intersections = figure.edges.values.forall { edge =>
       val q = figure.vertices(edge.aIndex).toDouble
       val s = figure.vertices(edge.bIndex).toDouble - q
+      if (q.x == 75 && q.y == 25 || q.x == 65 && q.y == 28) {
+        println("")
+      }
       segments.forall {
         case ((a, b), i) =>
           val p = a
@@ -74,15 +77,21 @@ object Scorer {
                 if (max < 0 || max > 1) {
                   var pisechka = q + (s * min)
                   pisechka = pisechka + pisechka.widthLength(0.01)
-                  hole.asPolygon.contains(pisechka.x, pisechka.y) || contains(
-                    segments((i + 1) % segments.size)._1,
-                    figure.vertices(edge.bIndex).toDouble
-                  )
+                  hole.asPolygon.contains(pisechka.x, pisechka.y) || {
+                    val n = q + s.widthLength(0.01)
+                    contains(
+                      segments((i + 1) % segments.size)._1,
+                      figure.vertices(edge.bIndex).toDouble
+                    ) && hole.asPolygon.contains(n.x, n.y)
+                  }
                 } else true
               } else if (max >= 0 && max <= 1) {
                 var pisechka = q + (s * max)
                 pisechka = pisechka + pisechka.widthLength(0.01)
-                hole.asPolygon.contains(pisechka.x, pisechka.y) || contains(segments((i + 1) % segments.size)._1, q)
+                hole.asPolygon.contains(pisechka.x, pisechka.y) || {
+                  val n = q + s.widthLength(0.01)
+                  contains(segments((i + 1) % segments.size)._1, q) && hole.asPolygon.contains(n.x, n.y)
+                }
               } else false
             case (_, 0) => true
             case _ =>
