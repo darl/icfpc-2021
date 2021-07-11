@@ -76,9 +76,7 @@ object PosesClient {
         client.send(request, HttpResponse.BodyHandlers.discarding())
       val status = response.statusCode()
       if (status != HttpURLConnection.HTTP_OK) {
-        println("Unexpected server response:")
-        println("HTTP code: " + status)
-        System.exit(2)
+        sys.error("Unexpected server response: " + "HTTP code: " + status)
       }
     }
 
