@@ -17,7 +17,7 @@ case class Visualizer(val problem: Problem) extends SolverListener {
   private var current = 0
   private var mousePos = new Point(1, 1)
 
-  images.add(Renderer.render(problem.hole, Seq(Scorer.score(problem.figure, problem)), problem.bonuses, 0))
+  images.add(Renderer.render(problem.hole, Seq(Scorer.score(problem.figure, problem, true)), problem.bonuses, 0))
   private val plane: MyPlane = MyPlane(images.get(0), 1)
   var playing = true
 

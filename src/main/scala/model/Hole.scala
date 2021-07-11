@@ -11,11 +11,14 @@ case class Hole(points: Seq[Vector]) {
     points.size
   )
 
+  val width: Int = points.map(_.x).max - points.map(_.x).min
+  val height: Int = points.map(_.y).max - points.map(_.y).min
+
   lazy val asArea = new Area(asPolygon)
 
   private val pointsPositions = scala.collection.mutable.HashMap[Vector, Boolean]()
 
-  def setInside(point: Vector) = pointsPositions.put(point, true)
+  def setInside(point: Vector): Unit = pointsPositions.put(point, true)
 
   def isInside(point: Vector): Boolean = {
     pointsPositions.getOrElseUpdate(point, asPolygon.contains(point.x, point.y))

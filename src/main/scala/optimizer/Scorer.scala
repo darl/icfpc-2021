@@ -104,8 +104,8 @@ object Scorer {
   def checkStretchingIsOk(currentF: Figure, problem: Problem): Boolean = {
     val allowedEpsDiff = problem.epsilon.toDouble / 1_000_000
     problem.figure.edges.values.forall { edge =>
-      val origLength = (problem.figure.vertices(edge.bIndex) - problem.figure.vertices(edge.aIndex)).squaredLength
       val curLength = (currentF.vertices(edge.bIndex) - currentF.vertices(edge.aIndex)).squaredLength
+      val origLength = (problem.figure.vertices(edge.bIndex) - problem.figure.vertices(edge.aIndex)).squaredLength
       Math.abs((curLength / origLength.toDouble) - 1) <= allowedEpsDiff
     }
   }
@@ -128,11 +128,11 @@ object Scorer {
     }.sum
   }
 
-  case class Score(figure: Figure, problem: Problem) {
+  case class Score(figure: Figure, problem: Problem, skipArea: Boolean) {
     val valid = checkStretchingIsOk(figure, problem)
     val fits = checkFits(figure, problem.hole)
     val dislikes = scoreDislikes(figure, problem.hole)
-    val outsideArea: Double = if (true || fits) 0d else scoreOutsideArea(figure, problem)
+    val outsideArea: Double = if (skipArea || fits) 0d else scoreOutsideArea(figure, problem)
     val bonus: Double = closestToBonus(problem.bonuses, figure)
     val bonusPoints = -100 * bonus
 
@@ -146,8 +146,8 @@ object Scorer {
       (stretchingPoints + outsidePoints + outsideAreaPoints + fitsPoints + dislikePoints + bonusPoints)
   }
 
-  def score(figure: Figure, problem: Problem): Score = {
-    Score(figure, problem)
+  def score(figure: Figure, problem: Problem, skipArea: Boolean): Score = {
+    Score(figure, problem, skipArea)
   }
 
 }
