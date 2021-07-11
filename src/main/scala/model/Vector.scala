@@ -72,7 +72,8 @@ case class Vector(x: Int, y: Int) {
     val B = -(b.x - a.x)
     val C = -A * a.x - B * a.y
 
-    val M2 = A * A + B * B
+    var M2 = A * A + B * B
+    M2 = if (M2 == 0) 1 else M2
 
     val DM = A * x + B * y + C
 

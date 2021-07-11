@@ -152,7 +152,7 @@ object Scorer {
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)
     val outsideAreaPoints: Double = outsideArea * -100000d
-    val fitsPoints = if (fits) 100000d else 0d
+    val fitsPoints = if (fits) 100000d else -100000d
     val dislikePoints: Double = if (fits) -dislikes else -4 * dislikes
 
     val total: Double =

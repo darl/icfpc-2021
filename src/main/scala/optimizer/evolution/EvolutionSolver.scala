@@ -16,7 +16,7 @@ class EvolutionSolver(solverListener: SolverListener) extends Solver {
     JointRotateGene,
     AxeMirrorGene,
     MirrorGene,
-//    MovePointGene,
+    MovePointGene,
     MoveOutsidePointGene
   )
 

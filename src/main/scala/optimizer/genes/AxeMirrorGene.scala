@@ -15,7 +15,7 @@ case class AxeMirrorGene(problem: Problem, axesToMirror: Map[Axe, Seq[Seq[Int]]]
           case (groupResult, group) =>
             groupResult.updateVertexes(
               group,
-              (_, v) => v.mirror(figure.vertices(axe.aIndex), figure.vertices(axe.bIndex))
+              (_, v) => v.mirror(groupResult.vertices(axe.aIndex), groupResult.vertices(axe.bIndex))
             )
         }
     }
@@ -58,7 +58,7 @@ object AxeMirrorGene extends GeneGenerator {
         figure.edges.analysis.axes
           .randomN(3)
           .map { axe =>
-            axe -> axe.subgroups.randomN(axe.subgroups.size)
+            axe -> axe.subgroups.randomN(1)
           }
           .toMap
       )
