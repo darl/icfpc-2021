@@ -1,29 +1,36 @@
 package icfpc21.classified
 package visualization
 
-import java.awt._
+import java.awt.{image, _}
 import java.awt.image.BufferedImage
 import javax.swing.JPanel
 
-case class MyPlane(var image: BufferedImage, var scale: Double = 4)
-    extends JPanel {
+case class MyPlane(var images: Seq[BufferedImage], var scale: Double = 4) extends JPanel {
 
   var xOffset = 0;
   var yOffset = 0;
 
   override def getPreferredSize: Dimension = {
-    new Dimension((image.getWidth * scale).toInt, (image.getHeight * scale).toInt)
+    new Dimension((images.map(_.getWidth).sum * scale * 5).toInt, (images.map(_.getHeight).sum * scale * 5).toInt)
   }
 
   override def paintComponent(g: Graphics): Unit = {
     super.paintComponent(g)
-    g.drawImage(
-      image,
-      xOffset,
-      yOffset,
-      (image.getWidth * scale).toInt,
-      (image.getHeight * scale).toInt,
-      null
-    )
+    val columns = Math.floor(Math.sqrt(images.size)).toInt
+    val width = (images.head.getWidth * scale).toInt
+    val height = (images.head.getHeight * scale).toInt
+    images.zipWithIndex.foreach {
+      case (image, index) =>
+        val offsetX = ((index / columns) * width) + xOffset
+        val offsetY = ((index % columns) * height) + yOffset
+        g.drawImage(
+          image,
+          offsetX,
+          offsetY,
+          width,
+          height,
+          null
+        )
+    }
   }
 }

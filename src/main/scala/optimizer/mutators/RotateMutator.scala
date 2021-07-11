@@ -1,14 +1,15 @@
 package icfpc21.classified
 package optimizer.mutators
 
-import icfpc21.classified.model.{Figure, Hole, Vector}
+import icfpc21.classified.model.{Figure, Hole, Problem, Vector}
 import icfpc21.classified.optimizer.Mutator
 
 import scala.util.Random
 
 object RotateMutator extends Mutator {
-  override def mutate(figure: Figure, hole: Hole, speed: Double): Figure = {
-    val angle = Random.nextDouble() * 2 * math.Pi
+  override def mutate(figure: Figure, problem: Problem, speed: Double): Figure = {
+    import problem.hole
+    val angle = MagicNumbers.randomAngle
 
     val holeCenter = Vector(
       x = Math.round((hole.points.map(_.x).max + hole.points.map(_.x).min) / 2.0).toInt,

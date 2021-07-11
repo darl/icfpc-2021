@@ -1,6 +1,8 @@
 package icfpc21.classified
 package model
 
+import icfpc21.classified.utils.DisjointSet
+
 import scala.collection.{SortedMap, mutable}
 
 case class GraphAnalyzer(edges: Seq[Edge]) {
@@ -54,23 +56,46 @@ case class GraphAnalyzer(edges: Seq[Edge]) {
     if (links.size == 1) {
       Seq.empty
     } else {
-      val candidates = links.map {
-        case (index, _) =>
-          val someOther = if (index == 0) 1 else 0
-          val stack = scala.collection.mutable.Stack(someOther)
-          val visited = scala.collection.mutable.HashSet[Int]()
-          while (stack.nonEmpty) {
-            val current = stack.pop()
-            visited.add(current)
-            links(current).filterNot(visited.contains).filterNot(_ == index).foreach(stack.push)
+      for {
+        idx <- links.keys
+        disjoint = {
+          val d = new DisjointSet
+          for (edge <- edges) {
+            if (edge.aIndex == idx) d.join(edge.bIndex, edge.bIndex)
+            else if (edge.bIndex == idx) d.join(edge.aIndex, edge.aIndex)
+            else {
+              d.join(edge.aIndex, edge.bIndex)
+            }
           }
-          if (visited.size < links.size - 1) {
-            Some(Joint(index, visited.toSet, links.keys.filterNot(visited.contains).filterNot(_ == index).toSet))
-          } else {
-            None
-          }
-      }
-      candidates.flatten.toSet.toSeq
-    }
+          d
+        }
+        if disjoint.connectedRegions.sizeIs > 1
+
+      } yield Joint(idx, disjoint.connectedRegions)
+    }.toVector
   }
+
+  lazy val axes: Seq[Axe] = {
+    for {
+      aIndex <- links.keys
+      bIndex <- links.keys
+      if aIndex < bIndex
+
+      disjoint = {
+        val d = new DisjointSet
+        for (edge <- edges) {
+          if (edge.containsPoint(aIndex) || edge.containsPoint(bIndex)) {
+            if (edge.aIndex != aIndex && edge.aIndex != bIndex) d.join(edge.aIndex, edge.aIndex)
+            if (edge.bIndex != aIndex && edge.bIndex != bIndex) d.join(edge.bIndex, edge.bIndex)
+            // do nothing
+          } else {
+            d.join(edge.aIndex, edge.bIndex)
+          }
+        }
+        d
+      }
+      if disjoint.connectedRegions.sizeIs > 1
+
+    } yield Axe(aIndex, bIndex, disjoint.connectedRegions)
+  }.toVector
 }

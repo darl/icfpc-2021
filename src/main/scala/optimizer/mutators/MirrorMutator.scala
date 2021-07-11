@@ -1,13 +1,13 @@
 package icfpc21.classified
 package optimizer.mutators
 
-import icfpc21.classified.model.{Figure, Hole}
+import icfpc21.classified.model.{Figure, Problem}
 import icfpc21.classified.optimizer.Mutator
 
 import scala.util.Random
 
 object MirrorMutator extends Mutator {
-  override def mutate(figure: Figure, hole: Hole, speed: Double): Figure = {
+  override def mutate(figure: Figure, problem: Problem, speed: Double): Figure = {
     if (Random.nextBoolean()) {
       val xMiddle = (figure.vertices.map(_.x).max + figure.vertices.map(_.x).min) / 2
       figure.copy(vertices = figure.vertices.map(v => v.copy(x = 2 * xMiddle - v.x)))

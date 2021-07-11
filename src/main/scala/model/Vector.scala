@@ -66,6 +66,22 @@ case class Vector(x: Int, y: Int) {
     ).round
   }
 
+  def mirror(a: Vector, b: Vector): Vector = {
+    // https://stackoverflow.com/a/8954454
+    val A = b.y - a.y
+    val B = -(b.x - a.x)
+    val C = -A * a.x - B * a.y
+
+    val M2 = A * A + B * B
+
+    val DM = A * x + B * y + C
+
+    Vector(
+      (x.toLong - 2L * A * DM.toLong / M2.toLong).toInt,
+      (y.toLong - 2L * B * DM.toLong / M2.toLong).toInt
+    )
+  }
+
 //  def normalize: Vector = widthLength(1)
 
   def round: Vector = {
@@ -80,6 +96,8 @@ case class Vector(x: Int, y: Int) {
 
   def isZero: Boolean = x == 0 && y == 0
   def nonZero: Boolean = !isZero
+
+  def distanceTo(other: Vector): Double = (this - other).length
 
   def toDouble: VectorD = VectorD(x, y)
 }

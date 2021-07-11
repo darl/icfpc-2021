@@ -1,13 +1,13 @@
 package icfpc21.classified
 package optimizer.mutators
 
-import icfpc21.classified.model.{Figure, Hole, Vector}
+import icfpc21.classified.model.{Figure, Hole, Problem, Vector}
 import icfpc21.classified.optimizer.Mutator
 
 import scala.util.Random
 
 object SmallMovePointMutator extends Mutator {
-  override def mutate(figure: Figure, hole: Hole, speed: Double): Figure = {
+  override def mutate(figure: Figure, problem: Problem, speed: Double): Figure = {
     val pointIdx = Random.nextInt(figure.vertices.size)
 
     val xMove = Random.nextInt(1) * (if (Random.nextBoolean()) 1 else -1)

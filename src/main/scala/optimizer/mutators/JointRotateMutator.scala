@@ -1,50 +1,22 @@
 package icfpc21.classified
 package optimizer.mutators
 
-import optimizer.Mutator
-import model.{Figure, Hole, Vector}
-import utils._
-import scala.util.Random
+import icfpc21.classified.model.{Figure, Problem}
+import icfpc21.classified.optimizer.Mutator
+import icfpc21.classified.utils._
 
 object JointRotateMutator extends Mutator {
-  override def mutate(figure: Figure, hole: Hole, speed: Double): Figure = {
-    val joints = figure.edges.analysis.joints
-    if (joints.isEmpty) {
-      return figure
-    }
-    val joint = joints.random
 
-    val rotationCenter = figure.vertices(joint.index)
+  override def mutate(figure: Figure, problem: Problem, speed: Double): Figure = {
+    if (figure.edges.analysis.joints.isEmpty) return figure
 
-    val rotateLeft = if (Random.nextBoolean()) {
-      val angle = Random.nextDouble() * 2 * math.Pi
-      figure.copy(vertices =
-        figure.vertices.zipWithIndex
-          .map {
-            case (v, i) =>
-              if (joint.left.contains(i)) {
-                v.rotateAround(rotationCenter, angle)
-              } else {
-                v
-              }
-          }
-      )
-    } else figure
+    val angle = MagicNumbers.randomAngle
 
-    val rotateRight = if (Random.nextBoolean()) {
-      val angle = Random.nextDouble() * 2 * math.Pi
-      rotateLeft.copy(vertices =
-        rotateLeft.vertices.zipWithIndex
-          .map {
-            case (v, i) =>
-              if (joint.right.contains(i)) {
-                v.rotateAround(rotationCenter, angle)
-              } else {
-                v
-              }
-          }
-      )
-    } else rotateLeft
-    rotateRight
+    val joint = figure.edges.analysis.joints.random
+    val center = figure.vertices(joint.index)
+
+    val randomSegment = joint.subgroups.random
+
+    figure.updateVertexes(randomSegment, (_, vector) => vector.rotateAround(center, angle))
   }
 }

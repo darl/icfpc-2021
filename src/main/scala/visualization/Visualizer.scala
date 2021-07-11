@@ -1,22 +1,23 @@
 package icfpc21.classified
 package visualization
 
-import model._
-import solver.SolverListener
+import icfpc21.classified.model._
+import icfpc21.classified.optimizer.Scorer
+import icfpc21.classified.solver.SolverListener
 
-import java.awt.{BorderLayout, FlowLayout, Point, Scrollbar}
 import java.awt.event._
 import java.awt.image.BufferedImage
+import java.awt.{FlowLayout, Point}
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.swing.JFrame
 
 case class Visualizer(val problem: Problem) extends SolverListener {
-  private val images = new CopyOnWriteArrayList[BufferedImage]()
+  private val images = new CopyOnWriteArrayList[Seq[BufferedImage]]()
   private val lock = new Object
   private var current = 0
   private var mousePos = new Point(1, 1)
 
-  images.add(Renderer.render(problem.hole, Seq(problem.figure), 0))
+  images.add(Renderer.render(problem.hole, Seq(Scorer.score(problem.figure, problem, true)), problem.bonuses, 0))
   private val plane: MyPlane = MyPlane(images.get(0), 1)
   var playing = true
 
@@ -37,15 +38,15 @@ case class Visualizer(val problem: Problem) extends SolverListener {
     frame.dispose()
   }
 
-  override def candidates(figures: Seq[Figure], generation: Int): Unit = {
-    images.add(Renderer.render(problem.hole, figures, generation))
+  override def candidates(scores: Seq[Scorer.Score], bonuses: Seq[BonusPoint], generation: Int): Unit = {
+    images.add(Renderer.render(problem.hole, scores.reverse, bonuses, generation))
 
     if (playing) {
-      if (images.size() > 50) {
+      while (images.size() > 20) {
         images.remove(0)
       }
       current = images.size() - 1
-      plane.image = images.get(current)
+      plane.images = images.get(current)
       plane.repaint()
     }
   }
@@ -74,14 +75,14 @@ case class Visualizer(val problem: Problem) extends SolverListener {
         current = current + 1
       }
       if (left || right) {
-        plane.image = images.get(current)
+        plane.images = images.get(current)
         playing = false
         plane.repaint()
       }
       if (e.getKeyCode == KeyEvent.VK_SPACE) {
         playing = true
         current = images.size() - 1
-        plane.image = images.get(current)
+        plane.images = images.get(current)
         plane.repaint()
       }
       if (e.getKeyCode == KeyEvent.VK_UP) {
