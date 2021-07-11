@@ -26,7 +26,8 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
     TranslateMutator,
     RotateMutator,
     JointRotateMutator,
-    AxeMirrorMutator
+    AxeMirrorMutator,
+    TensionMutator
   )
 
   def generate(figure: Figure, problem: Problem): Seq[Figure] = {
@@ -39,6 +40,7 @@ class GenerationalSolver(solverListener: SolverListener) extends Solver {
   }
 
   override def solve(problem: Problem): Solution = {
+
     def printScore(generation: Int, score: Scorer.Score): Unit = {
       println(
         s"## Generation $generation: Best score: ${score.total}, " +
