@@ -25,7 +25,8 @@ object GenerationMain extends App {
     if (
       lastSubmission.isEmpty || lastSubmission.get.dislikes.isEmpty || lastSubmission.get.dislikes.get > score.dislikes
     ) {
-      println("Sending solution")
+      println(s"Sending solution")
+      println(s"Last submission is worse: $lastSubmission")
       client.submitSolution(problemId, solution)
     } else {
       println(s"Last submission is better: $lastSubmission")
