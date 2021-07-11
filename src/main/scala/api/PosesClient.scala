@@ -1,16 +1,16 @@
 package icfpc21.classified
 package api
 
-import icfpc21.classified.model._
+import model._
 
-import java.net.{HttpURLConnection, URI, URL}
-import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 import io.circe._
-import io.circe.syntax._
-import io.circe.parser._
 import io.circe.generic.semiauto._
+import io.circe.parser._
+import io.circe.syntax._
 import org.jsoup.Jsoup
 
+import java.net.http.{HttpClient, HttpRequest, HttpResponse}
+import java.net.{HttpURLConnection, URI}
 import java.time.Instant
 import scala.jdk.CollectionConverters._
 import scala.util.Try

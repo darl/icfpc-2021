@@ -15,7 +15,7 @@ case class Agent(problem: Problem, genes: Seq[Gene]) {
       gene.modify(result)
   }
 
-  lazy val score = Scorer.score(figure, problem, true)
+  lazy val score = Scorer.score(figure, problem, false)
 
   def cross(other: Agent) = {
     Agent(

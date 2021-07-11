@@ -1,8 +1,10 @@
 package icfpc21.classified
 
-import icfpc21.classified.api.PosesClient
-import icfpc21.classified.optimizer.{GenerationalSolver, Scorer}
-import icfpc21.classified.solver.SolverListener
+import api.PosesClient
+import optimizer.Scorer
+import solver.SolverListener
+
+import icfpc21.classified.optimizer.evolution.EvolutionSolver
 
 object SubmitAllMain extends App {
   val problems = 15 to 132
@@ -13,7 +15,7 @@ object SubmitAllMain extends App {
 
     println(s"ProblemId = $problemId Eps = ${problem.epsilon}")
 
-    val solution = new GenerationalSolver(SolverListener.NoOp).solve(problem)
+    val solution = new EvolutionSolver(SolverListener.NoOp).solve(problem)
 
     println(solution)
     val score = Scorer.score(problem.figure.copy(vertices = solution.vertices), problem, true)
