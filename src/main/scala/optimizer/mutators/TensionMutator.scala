@@ -12,20 +12,21 @@ object TensionMutator extends Mutator {
     val empty = Vector.Zero
   }
 
-  private final val k = 1
+  private final val k = 0.3
 
   override def mutate(
       figure: Figure,
       problem: Problem,
       speed: Double
   ): Figure = {
-    val pointIdx = Random.nextInt(figure.vertices.size)
-    val chosenPoint = figure.vertices(pointIdx)
+    figure.vertices.indices.foldLeft(figure) {
+      case (figure, pointIdx) =>
+        val chosenPoint = figure.vertices(pointIdx)
+        val currentForce = figureTensionForce(problem)(pointIdx, chosenPoint)(figure)
+        val move = currentForce.scale(speed)
 
-    val currentForce = figureTensionForce(problem)(pointIdx, chosenPoint)(figure)
-    val move = currentForce.scale(speed)
-
-    figure.updateVertex(pointIdx, _ + move)
+        figure.updateVertex(pointIdx, _ + move)
+    }
   }
 
   private def figureTensionForce(problem: Problem)(chosenIdx: Int, point: Vector)(figure: Figure): Force = {
@@ -36,7 +37,8 @@ object TensionMutator extends Mutator {
         val currentDistance = currentEdge.length
         val initialDistance = (problem.figure.vertices(destinationIdx) - problem.figure.vertices(chosenIdx)).length
 
-        val currentForce = currentEdge.scale(currentEdge.length * k * currentDistance / initialDistance)
+        val currentForce = currentEdge.scale(-k * (currentDistance - initialDistance) / currentDistance)
+
         force + currentForce
     }
   }
