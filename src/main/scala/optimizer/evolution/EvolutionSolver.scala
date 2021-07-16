@@ -16,8 +16,9 @@ class EvolutionSolver(solverListener: SolverListener) extends Solver {
     JointRotateGene,
     AxeMirrorGene,
     MirrorGene,
-    MovePointGene
-//    MoveOutsidePointGene
+    MovePointGene,
+    MoveOutsidePointGene,
+    MovePointsToCenterGene
   )
 
   override def solve(problem: Problem): Solution = {
@@ -52,8 +53,8 @@ class EvolutionSolver(solverListener: SolverListener) extends Solver {
       val newGeneration = population.cross
       val mutated = newGeneration.mutate
       val selected = mutated.select
-      solverListener.candidates(selected.bestScores.take(20).map(_.score), problem.bonuses, generation)
       val bestScore = selected.bestScores.head
+      solverListener.candidates(selected.bestScores.take(20).map(_.score), problem.bonuses, generation)
       if (lastBest.total != bestScore.score.total || generation % 20 == 0) {
         printScore(generation, bestScore.score)
       }

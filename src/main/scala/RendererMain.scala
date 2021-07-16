@@ -1,0 +1,133 @@
+package icfpc21.classified
+
+import model._
+
+import icfpc21.classified.visualization.Visualizer
+
+object RendererMain extends App {
+  val problem = Problem(
+    hole = Hole(
+      List(
+        Vector(15, 60),
+        Vector(15, 25),
+        Vector(5, 25),
+        Vector(5, 5),
+        Vector(15, 5),
+        Vector(15, 10),
+        Vector(25, 10),
+        Vector(25, 5),
+        Vector(35, 5),
+        Vector(35, 10),
+        Vector(45, 10),
+        Vector(45, 5),
+        Vector(55, 5),
+        Vector(55, 10),
+        Vector(65, 10),
+        Vector(65, 5),
+        Vector(75, 5),
+        Vector(75, 25),
+        Vector(65, 25),
+        Vector(65, 60)
+      )
+    ),
+    figure = Figure(
+      IndexedSeq(
+        Vector(80, 16),
+        Vector(75, 19),
+        Vector(80, 7),
+        Vector(79, 20),
+        Vector(72, 8),
+        Vector(64, 24),
+        Vector(54, 28),
+        Vector(52, 27),
+        Vector(73, 14),
+        Vector(59, 31),
+        Vector(54, 32),
+        Vector(72, 16),
+        Vector(51, 34),
+        Vector(49, 35),
+        Vector(47, 35),
+        Vector(65, 15),
+        Vector(58, 38),
+        Vector(53, 39),
+        Vector(72, 25),
+        Vector(58, 17),
+        Vector(46, 41),
+        Vector(73, 21),
+        Vector(57, 45),
+        Vector(46, 19),
+        Vector(38, 47),
+        Vector(38, 49),
+        Vector(36, 40),
+        Vector(30, 16),
+        Vector(34, 47),
+        Vector(33, 55),
+        Vector(35, 56),
+        Vector(33, 43),
+        Vector(32, 50),
+        Vector(32, 52),
+        Vector(29, 45),
+        Vector(29, 55),
+        Vector(25, 46),
+        Vector(20, 21),
+        Vector(15, 31)
+      ),
+      Edges(
+        List(
+          Edge(2, 0),
+          Edge(0, 1),
+          Edge(1, 4),
+          Edge(4, 2),
+          Edge(4, 11),
+          Edge(11, 18),
+          Edge(18, 21),
+          Edge(21, 15),
+          Edge(15, 11),
+          Edge(2, 3),
+          Edge(3, 8),
+          Edge(8, 19),
+          Edge(19, 15),
+          Edge(9, 10),
+          Edge(10, 6),
+          Edge(6, 7),
+          Edge(7, 12),
+          Edge(12, 16),
+          Edge(16, 17),
+          Edge(17, 13),
+          Edge(13, 14),
+          Edge(14, 20),
+          Edge(20, 22),
+          Edge(22, 16),
+          Edge(16, 9),
+          Edge(3, 5),
+          Edge(5, 9),
+          Edge(22, 19),
+          Edge(19, 23),
+          Edge(23, 27),
+          Edge(27, 26),
+          Edge(26, 22),
+          Edge(31, 28),
+          Edge(28, 24),
+          Edge(24, 25),
+          Edge(25, 32),
+          Edge(32, 34),
+          Edge(34, 33),
+          Edge(33, 29),
+          Edge(29, 30),
+          Edge(30, 35),
+          Edge(35, 36),
+          Edge(36, 34),
+          Edge(34, 31),
+          Edge(31, 26),
+          Edge(36, 38),
+          Edge(38, 37),
+          Edge(37, 27)
+        )
+      )
+    ),
+    bonuses = Seq.empty,
+    epsilon = 1
+  )
+  val visualizer = Visualizer(problem)
+  visualizer.show()
+}

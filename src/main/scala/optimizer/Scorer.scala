@@ -46,9 +46,6 @@ object Scorer {
     val intersections = figure.edges.values.forall { edge =>
       val q = figure.vertices(edge.aIndex).toDouble
       val s = figure.vertices(edge.bIndex).toDouble - q
-      if (q.x == 75 && q.y == 25 || q.x == 65 && q.y == 28) {
-        println("")
-      }
       segments.forall {
         case ((a, b), i) =>
           val p = a
@@ -110,17 +107,18 @@ object Scorer {
 
   }
 
-  def findInvalidEdges(figure: Figure, problem: Problem): Seq[Edge] = {
+  def findInvalidEdges(figure: Figure, problem: Problem): Seq[Double] = {
     val allowedEpsDiff = problem.epsilon.toDouble / 1_000_000
-    problem.figure.edges.values.filter { edge =>
+    problem.figure.edges.values.map { edge =>
       val curLength = (figure.vertices(edge.bIndex) - figure.vertices(edge.aIndex)).squaredLength
       val origLength = (problem.figure.vertices(edge.bIndex) - problem.figure.vertices(edge.aIndex)).squaredLength
-      Math.abs((curLength / origLength.toDouble) - 1) > allowedEpsDiff
+      Math.abs((curLength / origLength.toDouble) - 1) - allowedEpsDiff
     }
   }
 
-  def checkStretchingIsOk(currentF: Figure, problem: Problem): Boolean = {
-    findInvalidEdges(currentF, problem).isEmpty
+  def checkStretchingIsOk(currentF: Figure, problem: Problem): (Boolean, Double) = {
+    val edges = findInvalidEdges(currentF, problem).filter(_ > 0)
+    edges.nonEmpty -> edges.sum
   }
 
   def scoreOutsideArea(figure: Figure, problem: Problem): Double = {
@@ -142,7 +140,7 @@ object Scorer {
   }
 
   case class Score(figure: Figure, problem: Problem, skipArea: Boolean) {
-    val valid = checkStretchingIsOk(figure, problem)
+    val (valid, howValid) = checkStretchingIsOk(figure, problem)
     val fits = checkFits(figure, problem.hole)
     val dislikes = scoreDislikes(figure, problem.hole)
     val outsideArea: Double = if (skipArea || fits) 0d else scoreOutsideArea(figure, problem)
@@ -150,6 +148,7 @@ object Scorer {
     val bonusPoints = -50 * bonus
 
     val stretchingPoints: Double = if (valid) 1000000000d else 0d
+    val howValidPoints = howValid * -100000000d
     val outsidePoints: Double = -10000d * scoreOutsidePoints(figure, problem.hole)
     val outsideAreaPoints: Double = outsideArea * -100000d
     val fitsPoints = if (fits) 100000d else -100000d

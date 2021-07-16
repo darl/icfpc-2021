@@ -22,7 +22,7 @@ case class AxeMirrorGene(problem: Problem, axe: Axe, subIndex: Int, mirror: Bool
   }
 
   override def mutate: Gene = {
-    this.copy(mirror = mirror ^ (Random.nextDouble() < 0.02))
+    this.copy(mirror = mirror ^ (Random.nextDouble() < 0.3))
   }
 }
 
@@ -31,7 +31,7 @@ object AxeMirrorGene extends GeneGenerator {
     import problem._
     problem.figure.edges.analysis.axes.flatMap { axe =>
       axe.subgroups.indices.map { group =>
-        AxeMirrorGene(problem, axe, group, Random.nextDouble() < 0.02)
+        AxeMirrorGene(problem, axe, group, Random.nextDouble() < 0.005)
       }
     }
   }

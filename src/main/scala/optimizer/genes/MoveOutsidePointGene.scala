@@ -6,13 +6,12 @@ import optimizer.evolution.{Gene, GeneGenerator}
 
 import scala.util.Random
 
-case class MoveOutsidePointGene(hole: Hole, pointIdx: Int, moveX: Boolean, moveY: Boolean, factor: Double)
-    extends Gene {
+case class MoveOutsidePointGene(hole: Hole, pointIdx: Int, move: Boolean, factor: Double) extends Gene {
   override def modify(figure: Figure): Figure = {
     val point = figure.vertices(pointIdx)
     if (!hole.isInside(point)) return figure
-    val xMove = Random.nextInt(hole.xDiff) * factor * (if (moveY) 1d else -1d)
-    val yMove = Random.nextInt(hole.yDiff) * factor * (if (moveY) 1d else -1d)
+    val xMove = Random.nextInt(hole.xDiff) * factor * (if (move) 1d else 0)
+    val yMove = Random.nextInt(hole.yDiff) * factor * (if (move) 1d else 0)
     val moveVector = Vector(xMove.round.toInt, yMove.round.toInt)
 
     figure.updateVertex(pointIdx, _ + moveVector)
@@ -20,9 +19,8 @@ case class MoveOutsidePointGene(hole: Hole, pointIdx: Int, moveX: Boolean, moveY
 
   override def mutate: Gene = {
     this.copy(
-      factor = factor + (Random.nextDouble() / 10 - 0.05),
-      moveX = Random.nextBoolean(),
-      moveY = Random.nextBoolean()
+      factor = factor + (Random.nextDouble() / 100 - 0.05),
+      move = move ^ (Random.nextDouble() < 0.3)
     )
   }
 }
@@ -35,9 +33,8 @@ object MoveOutsidePointGene extends GeneGenerator {
       MoveOutsidePointGene(
         hole = problem.hole,
         pointIdx = point,
-        factor = Random.nextDouble(),
-        moveY = Random.nextBoolean(),
-        moveX = Random.nextBoolean()
+        factor = Random.nextDouble() / 100 - 0.05,
+        move = Random.nextDouble() < 0.005
       )
     }
   }

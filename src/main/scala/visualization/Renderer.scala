@@ -40,6 +40,8 @@ object Renderer {
     val maxX = hole.points.map(_.x).max + 10
     if (sizeX == 0) { sizeX = (maxX - minX) * scale }
     if (sizeY == 0) { sizeY = (maxY - minY) * scale }
+    sizeX = sizeX.max(400)
+    sizeY = sizeY.max(400)
     scores.zipWithIndex.map {
       case (score, index) =>
         val image = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB)
@@ -96,13 +98,16 @@ object Renderer {
         }
 
         //Text
-        g.setColor(Color.RED)
+        g.setColor(Color.BLACK)
         g.setStroke(new BasicStroke(3))
         g.setFont(new Font("Monospaced", Font.PLAIN, 16))
         if (index == 0) {
           g.drawString(s"Generation: $generation", 10, 30)
           g.drawString(s"Dislikes: ${score.dislikes}", 10, 50)
         }
+
+        g.drawString(s"valid: ${score.valid}", 200, 20)
+        g.drawString(s"fits: ${score.fits}", 200, 40)
 
         g.dispose()
         image

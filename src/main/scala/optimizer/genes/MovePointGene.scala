@@ -13,8 +13,8 @@ case class MovePointGene(index: Int, move: Vector) extends Gene {
   override def mutate: Gene = {
     val a = Random.nextDouble()
     val b = Random.nextDouble()
-    val xMutate = if (a < 0.05) -1 else if (a > 0.95) 1 else 0
-    val yMutate = if (b < 0.05) -1 else if (b > 0.95) 1 else 0
+    val xMutate = if (a < 0.2) -1 else if (a > 0.8) 1 else 0
+    val yMutate = if (b < 0.2) -1 else if (b > 0.8) 1 else 0
     import move._
     MovePointGene(index, move = Vector(x + xMutate, y + yMutate))
   }
@@ -27,8 +27,8 @@ object MovePointGene extends GeneGenerator {
     figure.vertices.indices.map { point =>
       val a = Random.nextDouble()
       val b = Random.nextDouble()
-      val xMutate = if (a < 0.02) -1 else if (a > 0.98) 1 else 0
-      val yMutate = if (b < 0.02) -1 else if (b > 0.98) 1 else 0
+      val xMutate = if (a < 0.01) -1 else if (a > 0.99) 1 else 0
+      val yMutate = if (b < 0.01) -1 else if (b > 0.99) 1 else 0
       val move = Vector(xMutate, yMutate)
       MovePointGene(point, move)
     }

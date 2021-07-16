@@ -11,7 +11,7 @@ import java.awt.{FlowLayout, Point}
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.swing.JFrame
 
-case class Visualizer(val problem: Problem) extends SolverListener {
+case class Visualizer(problem: Problem) extends SolverListener {
   private val images = new CopyOnWriteArrayList[Seq[BufferedImage]]()
   private val lock = new Object
   private var current = 0
@@ -39,7 +39,7 @@ case class Visualizer(val problem: Problem) extends SolverListener {
   }
 
   override def candidates(scores: Seq[Scorer.Score], bonuses: Seq[BonusPoint], generation: Int): Unit = {
-    images.add(Renderer.render(problem.hole, scores.reverse, bonuses, generation))
+    images.add(Renderer.render(problem.hole, scores, bonuses, generation))
 
     if (playing) {
       while (images.size() > 20) {
